@@ -110,6 +110,19 @@ class LotkaVolterra(Task):
         """
         return [r"$\alpha$", r"$\beta$", r"$\gamma$", r"$\delta$"]
 
+    def get_param_names(self) -> List[str]:
+        return ["alpha", "beta", "gamma", "delta"]
+
+    def get_param_limits(self) -> torch.Tensor:
+        return torch.tensor(
+            [
+                [0.3877374827861786, 2.008577585220337],
+                [0.021874651312828064, 0.11331619322299957],
+                [0.3877374827861786, 2.008577585220337],
+                [0.021874651312828064, 0.11331619322299957],
+            ]
+        )
+
     def get_prior(self) -> Callable:
         def prior(num_samples=1):
             return pyro.sample("parameters", self.prior_dist.expand_by([num_samples]))

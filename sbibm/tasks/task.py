@@ -343,6 +343,10 @@ class Task:
 
         def model_fn():
             prior_ = pyro.poutine.mask(prior, torch.tensor(posterior))
+            # When posterior is False, the log_prob at this sample site is set to 0
+            # When posterior is True, it is the identity
+            # This broadcats
+            # Therefore, when posterior is false, we are evaluating the likelihood
             return simulator(prior_())
 
         if observation is not None:
