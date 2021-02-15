@@ -82,7 +82,7 @@ class Task:
         return self.prior_params
 
     def get_labels_data(self) -> List[str]:
-        """Get list containing parameter labels
+        """Get list containing data labels
         """
         return [f"data_{i+1}" for i in range(self.dim_data)]
 
