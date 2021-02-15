@@ -57,12 +57,6 @@ class BernoulliGLM(Task):
         self.prior_params = {"loc": torch.zeros((M + 1,)), "precision_matrix": Binv}
         self.prior_dist = pdist.MultivariateNormal(**self.prior_params)
 
-    def get_param_names(self) -> List[str]:
-        return [f"theta{n}" for n in range(10)]
-
-    def get_param_limits(self) -> torch.Tensor:
-        raise NotImplementedError()
-
     def get_prior(self) -> Callable:
         def prior(num_samples=1):
             return pyro.sample("parameters", self.prior_dist.expand_by([num_samples]))
