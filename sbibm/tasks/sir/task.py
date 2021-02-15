@@ -114,6 +114,12 @@ class SIR(Task):
         """
         return [r"$\beta$", r"$\gamma$"]
 
+    def get_param_names(self) -> List[str]:
+        return ["beta", "gamma"]
+
+    def get_param_limits(self) -> torch.Tensor:
+        raise NotImplementedError()
+
     def get_prior(self) -> Callable:
         def prior(num_samples=1):
             return pyro.sample("parameters", self.prior_dist.expand_by([num_samples]))

@@ -49,6 +49,12 @@ class GaussianLinearUniform(Task):
             )
         }
 
+    def get_param_names(self) -> List[str]:
+        return [f"theta{n}" for n in range(10)]
+
+    def get_param_limits(self) -> torch.Tensor:
+        raise NotImplementedError()
+
     def get_prior(self) -> Callable:
         def prior(num_samples=1):
             return pyro.sample("parameters", self.prior_dist.expand_by([num_samples]))
