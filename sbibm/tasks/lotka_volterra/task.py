@@ -110,9 +110,6 @@ class LotkaVolterra(Task):
         """
         return [r"$\alpha$", r"$\beta$", r"$\gamma$", r"$\delta$"]
 
-    def get_param_names(self) -> List[str]:
-        return ["alpha", "beta", "gamma", "delta"]
-
     def get_param_limits(self) -> torch.Tensor:
         return torch.tensor(
             [
