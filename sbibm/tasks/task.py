@@ -1,13 +1,12 @@
+import re
 from abc import abstractmethod
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Union
-import re
 
 import numpy as np
 import pandas as pd
 import pyro
 import torch
-
 from sbibm.utils.io import get_tensor_from_csv, save_tensor_to_csv
 from sbibm.utils.pyro import get_log_prob_fn, get_log_prob_grad_fn
 

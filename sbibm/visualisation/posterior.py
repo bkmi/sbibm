@@ -2,12 +2,10 @@ from typing import Any, Dict, List, Optional, Union
 
 import altair as alt
 import deneb as den
-import torch
-
 import sbibm
+import torch
 from sbibm.utils.io import get_ndarray_from_csv
 from sbibm.utils.torch import sample
-
 
 _LIMITS_ = {
     "bernoulli_glm": [[-6.0, +6.0] for _ in range(10)],

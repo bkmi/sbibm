@@ -1,9 +1,8 @@
 from typing import Any
 
 import numpy as np
-import torch
-
 import sbibm
+import torch
 from sbibm.tasks.task import Task
 
 

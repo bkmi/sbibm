@@ -9,6 +9,7 @@ from nflows.distributions.base import Distribution
 from nflows.nn import nets
 from nflows.utils import torchutils
 from sbi.utils.torchutils import create_alternating_binary_mask
+from sbibm.utils.torch import get_default_device
 from torch import distributions as dist
 from torch import optim
 from torch.nn import functional as F
@@ -16,8 +17,6 @@ from torch.nn.utils import clip_grad_norm_
 from torch.utils import data
 from torch.utils.data.sampler import SubsetRandomSampler
 from tqdm import tqdm  # noqa
-
-from sbibm.utils.torch import get_default_device
 
 
 def get_flow(

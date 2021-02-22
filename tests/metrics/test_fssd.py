@@ -1,21 +1,20 @@
 from pathlib import Path
 
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import pyro
+import sbibm
 import sbibm.third_party.kgof as kgof
 import sbibm.third_party.kgof.data as data
 import sbibm.third_party.kgof.density as density
 import sbibm.third_party.kgof.goftest as gof
 import sbibm.third_party.kgof.kernel as kernel
 import sbibm.third_party.kgof.util as util
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
-import pyro
 import scipy.stats as stats
 import torch
 import torch.distributions.transforms as transforms
 from sbibm.third_party.kgof.density import UnnormalizedDensity
-
-import sbibm
 
 
 def test_fssd():

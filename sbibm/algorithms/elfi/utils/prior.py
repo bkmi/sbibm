@@ -2,7 +2,6 @@ import logging
 
 import elfi
 import numpy as np
-
 from sbibm.tasks.task import Task
 
 

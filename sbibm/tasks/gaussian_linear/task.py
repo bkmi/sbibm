@@ -4,7 +4,6 @@ from typing import Callable, Optional
 import pyro
 import torch
 from pyro import distributions as pdist
-
 from sbibm.tasks.simulator import Simulator
 from sbibm.tasks.task import Task
 

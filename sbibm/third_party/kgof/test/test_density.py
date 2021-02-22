@@ -4,17 +4,17 @@ Module for testing density module.
 
 __author__ = "wittawat"
 
-import numpy as np
+import unittest
+
 import matplotlib.pyplot as plt
+import numpy as np
 import sbibm.third_party.kgof.data as data
 import sbibm.third_party.kgof.density as density
-import sbibm.third_party.kgof.util as util
-import sbibm.third_party.kgof.kernel as kernel
-import sbibm.third_party.kgof.goftest as gof
 import sbibm.third_party.kgof.glo as glo
+import sbibm.third_party.kgof.goftest as gof
+import sbibm.third_party.kgof.kernel as kernel
+import sbibm.third_party.kgof.util as util
 import scipy.stats as stats
-
-import unittest
 
 
 class TestIsotropicNormal(unittest.TestCase):
