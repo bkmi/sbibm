@@ -91,12 +91,12 @@ class Task:
         """Get list containing parameter labels
         """
         return [f"parameter_{i+1}" for i in range(self.dim_parameters)]
-    
+
     def get_names_parameters(self) -> List[str]:
         """Get list containing parameter names without extra characters for plots
         """
-        pattern = re.compile('\W+')
-        return [re.sub(pattern, '', string) for string in self.get_labels_parameters()]
+        pattern = re.compile("\W+")
+        return [re.sub(pattern, "", string) for string in self.get_labels_parameters()]
 
     def get_observation(self, num_observation: int) -> torch.Tensor:
         """Get observed data for a given observation number
