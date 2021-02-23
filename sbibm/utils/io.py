@@ -19,7 +19,7 @@ def get_float_from_csv(
 def get_int_from_csv(
     path: Union[str, Path], dtype: type = np.int64,
 ):
-    """Get a single float from a csv file
+    """Get a single int from a csv file
     """
     with open(path, "r") as fh:
         return np.loadtxt(fh).astype(dtype)
@@ -82,7 +82,7 @@ def save_float_to_csv(
 def save_int_to_csv(
     path: Union[str, Path], data: int, dtype: type = np.int64,
 ):
-    """Save a single float to a csv file
+    """Save a single int to a csv file
     """
     np.savetxt(
         path, np.asarray(data).reshape(-1).astype(dtype), delimiter=",",
