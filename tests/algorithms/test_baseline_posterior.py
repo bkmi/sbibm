@@ -1,7 +1,6 @@
 import pytest
-import torch
-
 import sbibm
+import torch
 from sbibm.algorithms.pytorch.baseline_posterior import run as run_posterior
 from sbibm.metrics.c2st import c2st
 

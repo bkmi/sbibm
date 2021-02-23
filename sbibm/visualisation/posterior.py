@@ -2,9 +2,8 @@ from typing import Any, Dict, List, Optional, Union
 
 import altair as alt
 import deneb as den
-import torch
-
 import sbibm
+import torch
 from sbibm.utils.io import get_ndarray_from_csv
 from sbibm.utils.torch import sample
 

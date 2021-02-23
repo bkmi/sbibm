@@ -4,7 +4,6 @@ from typing import Callable, Optional
 
 import numpy as np
 import torch
-
 from sbibm.tasks.task import Task
 from sbibm.third_party.kgof.goftest import KernelSteinTest, bootstrapper_rademacher
 from sbibm.third_party.kgof.kernel import KGauss

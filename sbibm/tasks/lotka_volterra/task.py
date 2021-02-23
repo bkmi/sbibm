@@ -5,11 +5,10 @@ from pathlib import Path
 from typing import Callable, List, Optional
 
 import pyro
+import sbibm  # noqa -- needed for setting sysimage path
 import torch
 from diffeqtorch import DiffEq
 from pyro import distributions as pdist
-
-import sbibm  # noqa -- needed for setting sysimage path
 from sbibm.tasks.simulator import Simulator
 from sbibm.tasks.task import Task
 from sbibm.utils.decorators import lazy_property

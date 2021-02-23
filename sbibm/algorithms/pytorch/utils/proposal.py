@@ -2,9 +2,8 @@ import math
 import time
 from typing import Any
 
-import torch
-
 import sbibm
+import torch
 from sbibm.tasks.task import Task
 from sbibm.utils.kde import get_kde
 from sbibm.utils.nflows import get_flow, train_flow

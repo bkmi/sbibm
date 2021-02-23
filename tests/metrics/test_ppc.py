@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-
 from sbibm.metrics.ppc import median_distance
 
 

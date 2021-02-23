@@ -7,7 +7,6 @@ __author__ = "wittawat"
 import autograd.numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-
 import sbibm.third_party.kgof.glo as glo
 
 

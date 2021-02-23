@@ -17,9 +17,8 @@ from abc import ABCMeta, abstractmethod
 
 import autograd
 import autograd.numpy as np
-import scipy.stats as stats
-
 import sbibm.third_party.kgof.data as data
+import scipy.stats as stats
 
 
 def warn_bounded_domain(self):

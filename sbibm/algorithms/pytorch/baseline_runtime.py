@@ -1,9 +1,8 @@
 from typing import Any
 
 import torch
-from tqdm.auto import tqdm
-
 from sbibm.tasks.task import Task
+from tqdm.auto import tqdm
 
 
 def run(

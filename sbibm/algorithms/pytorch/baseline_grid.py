@@ -2,12 +2,11 @@ import math
 import time
 from typing import Any, Optional
 
-import torch
-from tqdm.auto import tqdm
-
 import sbibm
+import torch
 from sbibm.tasks.task import Task
 from sbibm.utils.torch import choice
+from tqdm.auto import tqdm
 
 
 def run(

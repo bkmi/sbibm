@@ -2,12 +2,11 @@ import time
 import warnings
 from typing import Any, Dict, Optional
 
+import sbibm
 import torch
 from pyro.infer.mcmc import HMC, NUTS
 from sbi.mcmc.mcmc import MCMC
 from sbi.mcmc.slice import Slice
-
-import sbibm
 from sbibm.algorithms.pyro.utils.tensorboard import (
     tb_acf,
     tb_ess,
