@@ -1,8 +1,9 @@
 from typing import Optional, Tuple
 
-import sbibm
 import torch
 from sbi.inference import MCABC
+
+import sbibm
 from sbibm.tasks.task import Task
 from sbibm.utils.io import save_tensor_to_csv
 from sbibm.utils.kde import get_kde

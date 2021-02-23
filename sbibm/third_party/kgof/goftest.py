@@ -16,11 +16,12 @@ from abc import ABCMeta, abstractmethod
 import autograd
 import autograd.numpy as np
 import matplotlib.pyplot as plt
+import scipy
+import scipy.stats as stats
+
 import sbibm.third_party.kgof.data as data
 import sbibm.third_party.kgof.kernel as kernel
 import sbibm.third_party.kgof.util as util
-import scipy
-import scipy.stats as stats
 
 
 class GofTest(with_metaclass(ABCMeta, object)):

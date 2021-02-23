@@ -1,6 +1,7 @@
 from typing import Any, Callable, Optional
 
 import torch
+
 from sbibm.tasks.task import Task
 from sbibm.utils.exceptions import SimulationBudgetExceeded
 

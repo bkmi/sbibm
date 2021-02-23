@@ -15,6 +15,14 @@ import autograd.numpy as np
 # https://github.com/karlnapf/independent-jobs
 # The independent_jobs and kgof have to be in the global search path (.bashrc)
 import independent_jobs as inj
+from independent_jobs.aggregators.SingleResultAggregator import SingleResultAggregator
+from independent_jobs.engines.BatchClusterParameters import BatchClusterParameters
+from independent_jobs.engines.SerialComputationEngine import SerialComputationEngine
+from independent_jobs.engines.SlurmComputationEngine import SlurmComputationEngine
+from independent_jobs.jobs.IndependentJob import IndependentJob
+from independent_jobs.results.SingleResult import SingleResult
+from independent_jobs.tools.Log import logger
+
 import sbibm.third_party.kgof as kgof
 import sbibm.third_party.kgof.data as data
 import sbibm.third_party.kgof.density as density
@@ -24,13 +32,6 @@ import sbibm.third_party.kgof.intertst as tgof
 import sbibm.third_party.kgof.kernel as kernel
 import sbibm.third_party.kgof.mmd as mgof
 import sbibm.third_party.kgof.util as util
-from independent_jobs.aggregators.SingleResultAggregator import SingleResultAggregator
-from independent_jobs.engines.BatchClusterParameters import BatchClusterParameters
-from independent_jobs.engines.SerialComputationEngine import SerialComputationEngine
-from independent_jobs.engines.SlurmComputationEngine import SlurmComputationEngine
-from independent_jobs.jobs.IndependentJob import IndependentJob
-from independent_jobs.results.SingleResult import SingleResult
-from independent_jobs.tools.Log import logger
 
 """
 All the job functions return a dictionary with the following keys:

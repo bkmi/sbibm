@@ -5,10 +5,11 @@ from pathlib import Path
 from typing import Callable, List, Optional
 
 import pyro
-import sbibm  # noqa -- needed for setting sysimage path
 import torch
 from diffeqtorch import DiffEq
 from pyro import distributions as pdist
+
+import sbibm  # noqa -- needed for setting sysimage path
 from sbibm.tasks.simulator import Simulator
 from sbibm.tasks.task import Task
 from sbibm.utils.decorators import lazy_property
@@ -20,6 +21,7 @@ class LotkaVolterra(Task):
         days: float = 20.0,
         saveat: float = 0.1,
         summary: Optional[str] = "subsample",
+        simulator_scale: float = 0.1,
     ):
         """Lotka-Volterra model
 
@@ -85,6 +87,7 @@ class LotkaVolterra(Task):
         self.tspan = torch.tensor([0.0, days])
         self.days = days
         self.saveat = saveat
+        self.simulator_scale = simulator_scale
 
         # NOTE: For subsample statistic
         self.total_count = 1000  # TODO: Value?
@@ -179,7 +182,7 @@ class LotkaVolterra(Task):
                     "data",
                     pdist.LogNormal(
                         loc=torch.log(us[idx_contains_no_nan, :].clamp(1e-10, 10000.0)),
-                        scale=0.1,
+                        scale=self.simulator_scale,
                     ).to_event(1),
                 )
                 return data

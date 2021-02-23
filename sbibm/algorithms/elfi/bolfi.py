@@ -6,6 +6,7 @@ from typing import Optional
 import elfi
 import numpy as np
 import torch
+
 from sbibm.algorithms.elfi.utils.prior import build_prior
 from sbibm.algorithms.elfi.utils.wrapper import Simulator
 from sbibm.tasks.task import Task

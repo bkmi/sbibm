@@ -4,6 +4,7 @@ from typing import Iterable, Optional, Union
 import numpy as np
 import pandas as pd
 import torch
+
 from sbibm.utils.torch import get_default_device
 
 

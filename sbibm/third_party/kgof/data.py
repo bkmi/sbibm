@@ -13,8 +13,9 @@ __author__ = "wittawat"
 from abc import ABCMeta, abstractmethod
 
 import autograd.numpy as np
-import sbibm.third_party.kgof.util as util
 import scipy.stats as stats
+
+import sbibm.third_party.kgof.util as util
 
 
 class Data(object):

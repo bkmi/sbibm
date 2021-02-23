@@ -1,12 +1,13 @@
 from typing import Optional, Tuple
 
 import pandas as pd
-import sbibm
 import torch
 from sbi.inference import SMCABC
+from sklearn.linear_model import LinearRegression
+
+import sbibm
 from sbibm.tasks.task import Task
 from sbibm.utils.kde import get_kde
-from sklearn.linear_model import LinearRegression
 
 from .utils import clip_int, get_sass_transform, run_lra
 

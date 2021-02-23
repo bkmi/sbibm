@@ -1,7 +1,8 @@
 import pytest  # noqa
-import sbibm
 import torch
 from sbi.utils.plot import pairplot
+
+import sbibm
 from sbibm.algorithms.pytorch.baseline_rejection import run
 from sbibm.algorithms.pytorch.utils.proposal import get_proposal
 from sbibm.metrics.c2st import c2st

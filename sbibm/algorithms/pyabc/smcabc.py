@@ -6,8 +6,9 @@ from typing import Optional, Tuple
 
 import numpy as np
 import pyabc
-import sbibm
 import torch
+
+import sbibm
 from sbibm.algorithms.sbi.utils import clip_int, get_sass_transform, run_lra
 from sbibm.tasks.task import Task
 from sbibm.utils.kde import get_kde
