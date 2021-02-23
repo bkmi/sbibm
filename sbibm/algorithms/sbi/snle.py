@@ -20,7 +20,7 @@ def run(
     num_simulations: int,
     num_observation: Optional[int] = None,
     observation: Optional[torch.Tensor] = None,
-    num_rounds: int = 10,
+    max_rounds: int = 10,
     neural_net: str = "maf",
     hidden_features: int = 50,
     simulation_batch_size: int = 1000,
@@ -46,7 +46,7 @@ def run(
         observation: Observation, alternative to `num_observation`
         num_samples: Number of samples to generate from posterior
         num_simulations: Simulation budget
-        num_rounds: Number of rounds
+        max_rounds: Number of rounds
         neural_net: Neural network to use, one of maf / mdn / made / nsf
         hidden_features: Number of hidden features in network
         simulation_batch_size: Batch size for simulator
@@ -65,12 +65,12 @@ def run(
 
     log = logging.getLogger(__name__)
 
-    if num_rounds == 1:
+    if max_rounds == 1:
         log.info(f"Running NLE")
         num_simulations_per_round = num_simulations
     else:
         log.info(f"Running SNLE")
-        num_simulations_per_round = math.floor(num_simulations / num_rounds)
+        num_simulations_per_round = math.floor(num_simulations / max_rounds)
 
     if simulation_batch_size > num_simulations_per_round:
         simulation_batch_size = num_simulations_per_round
@@ -104,7 +104,7 @@ def run(
     proposal = prior
     mcmc_parameters["warmup_steps"] = 25
 
-    for r in range(num_rounds):
+    for r in range(max_rounds):
         theta, x = inference.simulate_for_sbi(
             simulator,
             proposal,

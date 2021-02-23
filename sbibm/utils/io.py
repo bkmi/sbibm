@@ -17,6 +17,15 @@ def get_float_from_csv(
         return np.loadtxt(fh).astype(dtype)
 
 
+def get_int_from_csv(
+    path: Union[str, Path], dtype: type = np.int64,
+):
+    """Get a single float from a csv file
+    """
+    with open(path, "r") as fh:
+        return np.loadtxt(fh).astype(dtype)
+
+
 def get_results(
     dataset: str = "main_paper.csv", subfolder: str = "benchmarking_sbi/results/"
 ) -> pd.DataFrame:
@@ -67,7 +76,17 @@ def save_float_to_csv(
     """Save a single float to a csv file
     """
     np.savetxt(
-        path, np.asarray(data).reshape(-1).astype(np.float32), delimiter=",",
+        path, np.asarray(data).reshape(-1).astype(dtype), delimiter=",",
+    )
+
+
+def save_int_to_csv(
+    path: Union[str, Path], data: int, dtype: type = np.int64,
+):
+    """Save a single float to a csv file
+    """
+    np.savetxt(
+        path, np.asarray(data).reshape(-1).astype(dtype), delimiter=",",
     )
 
 
