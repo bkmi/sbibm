@@ -107,8 +107,7 @@ class LotkaVolterra(Task):
         )
 
     def get_labels_parameters(self) -> List[str]:
-        """Get list containing parameter labels
-        """
+        """Get list containing parameter labels"""
         return [r"$\alpha$", r"$\beta$", r"$\gamma$", r"$\delta$"]
 
     def get_param_limits(self) -> torch.Tensor:
@@ -127,7 +126,10 @@ class LotkaVolterra(Task):
 
         return prior
 
-    def get_simulator(self, max_calls: Optional[int] = None,) -> Simulator:
+    def get_simulator(
+        self,
+        max_calls: Optional[int] = None,
+    ) -> Simulator:
         """Get function returning samples from simulator given parameters
 
         Args:
@@ -192,8 +194,7 @@ class LotkaVolterra(Task):
         return Simulator(task=self, simulator=simulator, max_calls=max_calls)
 
     def unflatten_data(self, data: torch.Tensor) -> torch.Tensor:
-        """Unflattens data into multiple observations
-        """
+        """Unflattens data into multiple observations"""
         if self.summary is None:
             return data.reshape(-1, 2, int(self.dim_data / 2))
         else:

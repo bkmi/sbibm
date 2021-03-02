@@ -101,8 +101,8 @@ class GaussianLinearUniform(Task):
         """Get function returning samples from simulator given parameters
 
         Args:
-            max_calls: Maximum number of function calls. Additional calls will 
-                result in SimulationBudgetExceeded exceptions. Defaults to None 
+            max_calls: Maximum number of function calls. Additional calls will
+                result in SimulationBudgetExceeded exceptions. Defaults to None
                 for infinite budget
 
         Return:
@@ -121,8 +121,7 @@ class GaussianLinearUniform(Task):
         return Simulator(task=self, simulator=simulator, max_calls=max_calls)
 
     def get_observation(self, num_observation: int) -> torch.Tensor:
-        """Get observed data for a given observation number
-        """
+        """Get observed data for a given observation number"""
         path = (
             self.path
             / "files"
@@ -134,8 +133,7 @@ class GaussianLinearUniform(Task):
         return get_tensor_from_csv(path)
 
     def get_reference_posterior_samples(self, num_observation: int) -> torch.Tensor:
-        """Get reference posterior samples for a given observation number
-        """
+        """Get reference posterior samples for a given observation number"""
         path = (
             self.path
             / "files"
@@ -147,8 +145,7 @@ class GaussianLinearUniform(Task):
         return get_tensor_from_csv(path)
 
     def get_true_parameters(self, num_observation: int) -> torch.Tensor:
-        """Get true parameters (parameters that generated the data) for a given observation number
-        """
+        """Get true parameters (parameters that generated the data) for a given observation number"""
         path = (
             self.path
             / "files"
@@ -160,8 +157,7 @@ class GaussianLinearUniform(Task):
         return get_tensor_from_csv(path)
 
     def _get_observation_seed(self, num_observation: int) -> int:
-        """Get observation seed for a given observation number
-        """
+        """Get observation seed for a given observation number"""
         path = (
             self.path
             / "files"
@@ -173,8 +169,7 @@ class GaussianLinearUniform(Task):
         return int(pd.read_csv(path)["observation_seed"][0])
 
     def _save_observation(self, num_observation: int, observation: torch.Tensor):
-        """Save observed data for a given observation number
-        """
+        """Save observed data for a given observation number"""
         path = (
             self.path
             / "files"
@@ -187,8 +182,7 @@ class GaussianLinearUniform(Task):
         self.save_data(path, observation)
 
     def _save_observation_seed(self, num_observation: int, observation_seed: int):
-        """Save observation seed for a given observation number
-        """
+        """Save observation seed for a given observation number"""
         path = (
             self.path
             / "files"
@@ -206,8 +200,7 @@ class GaussianLinearUniform(Task):
     def _save_reference_posterior_samples(
         self, num_observation: int, reference_posterior_samples: torch.Tensor
     ):
-        """Save reference posterior samples for a given observation number
-        """
+        """Save reference posterior samples for a given observation number"""
         path = (
             self.path
             / "files"
@@ -222,8 +215,7 @@ class GaussianLinearUniform(Task):
     def _save_true_parameters(
         self, num_observation: int, true_parameters: torch.Tensor
     ):
-        """Save true parameters (parameters that generated the data) for a given observation number
-        """
+        """Save true parameters (parameters that generated the data) for a given observation number"""
         path = (
             self.path
             / "files"
@@ -291,7 +283,12 @@ class GaussianLinearUniform(Task):
         low = self.prior_params["low"][0].numpy()
         high = self.prior_params["high"][0].numpy()
         scale = 1 / self.simulator_params["precision_matrix"][0, 0].numpy()
-        return TruncNorm(mean=observation, low=low, high=high, scale=scale,)
+        return TruncNorm(
+            mean=observation,
+            low=low,
+            high=high,
+            scale=scale,
+        )
 
     def _sample_reference_posterior(
         self,
@@ -308,7 +305,7 @@ class GaussianLinearUniform(Task):
             num_observation: Observation number
             observation: Instead of passing an observation number, an observation may be
                 passed directly
-        
+
         Returns:
             Samples from reference posterior
         """
@@ -352,5 +349,8 @@ if __name__ == "__main__":
     parser.add_argument("--simulator_scale", type=float, default=0.1)
     args = parser.parse_args()
 
-    task = GaussianLinearUniform(dim=args.dim, simulator_scale=args.simulator_scale,)
+    task = GaussianLinearUniform(
+        dim=args.dim,
+        simulator_scale=args.simulator_scale,
+    )
     task._setup(n_jobs=args.n_jobs)

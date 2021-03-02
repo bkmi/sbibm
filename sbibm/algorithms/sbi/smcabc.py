@@ -41,7 +41,7 @@ def run(
 
     SMC-ABC supports two different ways of scheduling epsilon:
     1) Exponential decay: eps_t+1 = epsilon_decay * eps_t
-    2) Distance based decay: the new eps is determined from the "epsilon_decay" 
+    2) Distance based decay: the new eps is determined from the "epsilon_decay"
         quantile of the distances of the accepted simulations in the previous population. This is used if `distance_based_decay` is set to True.
 
     Args:
@@ -56,7 +56,7 @@ def run(
         epsilon_decay: Decay for epsilon; treated as quantile in case of distance based decay.
         distance_based_decay: Whether to determine new epsilon from quantile of
             distances of the previous population.
-        ess_min: Threshold for resampling a population if effective sampling size is 
+        ess_min: Threshold for resampling a population if effective sampling size is
             too small.
         initial_round_factor: Used to determine initial round size
         batch_size: Batch size for the simulator
@@ -139,7 +139,9 @@ def run(
 
     if save_summary:
         log.info("Saving smcabc summary to csv.")
-        pd.DataFrame.from_dict(summary,).to_csv("summary.csv", index=False)
+        pd.DataFrame.from_dict(
+            summary,
+        ).to_csv("summary.csv", index=False)
 
     assert simulator.num_simulations == num_simulations
 

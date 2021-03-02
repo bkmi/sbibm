@@ -67,39 +67,32 @@ class Task:
 
     @abstractmethod
     def get_prior(self) -> Callable:
-        """Get function returning parameters from prior
-        """
+        """Get function returning parameters from prior"""
         raise NotImplementedError
 
     def get_prior_dist(self) -> torch.distributions.Distribution:
-        """Get prior distribution
-        """
+        """Get prior distribution"""
         return self.prior_dist
 
     def get_prior_params(self) -> Dict[str, torch.Tensor]:
-        """Get parameters of prior distribution
-        """
+        """Get parameters of prior distribution"""
         return self.prior_params
 
     def get_labels_data(self) -> List[str]:
-        """Get list containing data labels
-        """
+        """Get list containing data labels"""
         return [f"data_{i+1}" for i in range(self.dim_data)]
 
     def get_labels_parameters(self) -> List[str]:
-        """Get list containing parameter labels
-        """
+        """Get list containing parameter labels"""
         return [f"parameter_{i+1}" for i in range(self.dim_parameters)]
 
     def get_names_parameters(self) -> List[str]:
-        """Get list containing parameter names without extra characters for plots
-        """
+        """Get list containing parameter names without extra characters for plots"""
         pattern = re.compile("\W+")
         return [re.sub(pattern, "", string) for string in self.get_labels_parameters()]
 
     def get_observation(self, num_observation: int) -> torch.Tensor:
-        """Get observed data for a given observation number
-        """
+        """Get observed data for a given observation number"""
         path = (
             self.path
             / "files"
@@ -109,8 +102,7 @@ class Task:
         return get_tensor_from_csv(path)
 
     def get_reference_posterior_samples(self, num_observation: int) -> torch.Tensor:
-        """Get reference posterior samples for a given observation number
-        """
+        """Get reference posterior samples for a given observation number"""
         path = (
             self.path
             / "files"
@@ -121,13 +113,11 @@ class Task:
 
     @abstractmethod
     def get_simulator(self) -> Callable:
-        """Get function returning parameters from prior
-        """
+        """Get function returning parameters from prior"""
         raise NotImplementedError
 
     def get_true_parameters(self, num_observation: int) -> torch.Tensor:
-        """Get true parameters (parameters that generated the data) for a given observation number
-        """
+        """Get true parameters (parameters that generated the data) for a given observation number"""
         path = (
             self.path
             / "files"
@@ -137,13 +127,11 @@ class Task:
         return get_tensor_from_csv(path)
 
     def save_data(self, path: Union[str, Path], data: torch.Tensor):
-        """Save data to a given path
-        """
+        """Save data to a given path"""
         save_tensor_to_csv(path, data, self.get_labels_data())
 
     def save_parameters(self, path: Union[str, Path], parameters: torch.Tensor):
-        """Save parameters to a given path
-        """
+        """Save parameters to a given path"""
         save_tensor_to_csv(path, parameters, self.get_labels_parameters())
 
     def flatten_data(self, data: torch.Tensor) -> torch.Tensor:
@@ -194,7 +182,9 @@ class Task:
         )
 
         log_prob_fn, _ = get_log_prob_fn(
-            conditioned_model, implementation=implementation, **kwargs,
+            conditioned_model,
+            implementation=implementation,
+            **kwargs,
         )
 
         def log_prob_pyro(parameters):
@@ -240,7 +230,7 @@ class Task:
             kwargs: Passed to `sbibm.utils.pyro.get_log_prob_grad_fn`
 
         Returns:
-            `log_prob_grad_fn` that returns gradients as `batch_size` x 
+            `log_prob_grad_fn` that returns gradients as `batch_size` x
             `dim_parameter`
         """
         assert not (num_observation is None and observation is None)
@@ -254,7 +244,9 @@ class Task:
             posterior=posterior,
         )
         log_prob_grad_fn, _ = get_log_prob_grad_fn(
-            conditioned_model, implementation=implementation, **kwargs,
+            conditioned_model,
+            implementation=implementation,
+            **kwargs,
         )
 
         def log_prob_grad_pyro(parameters):
@@ -295,7 +287,7 @@ class Task:
             num_observation: Observation number
             observation: Instead of passing an observation number, an observation may be
                 passed directly
-            automatic_transforms_enabled: If True, will automatically construct 
+            automatic_transforms_enabled: If True, will automatically construct
                 transforms to unconstrained space
 
         Returns:
@@ -306,14 +298,14 @@ class Task:
         )
 
         _, transforms = get_log_prob_fn(
-            conditioned_model, automatic_transform_enabled=automatic_transforms_enabled,
+            conditioned_model,
+            automatic_transform_enabled=automatic_transforms_enabled,
         )
 
         return transforms
 
     def _get_observation_seed(self, num_observation: int) -> int:
-        """Get observation seed for a given observation number
-        """
+        """Get observation seed for a given observation number"""
         path = (
             self.path
             / "files"
@@ -382,8 +374,7 @@ class Task:
         raise NotImplementedError
 
     def _save_observation_seed(self, num_observation: int, observation_seed: int):
-        """Save observation seed for a given observation number
-        """
+        """Save observation seed for a given observation number"""
         path = (
             self.path
             / "files"
@@ -397,8 +388,7 @@ class Task:
         ).to_csv(path, index=False)
 
     def _save_observation(self, num_observation: int, observation: torch.Tensor):
-        """Save observed data for a given observation number
-        """
+        """Save observed data for a given observation number"""
         path = (
             self.path
             / "files"
@@ -411,8 +401,7 @@ class Task:
     def _save_reference_posterior_samples(
         self, num_observation: int, reference_posterior_samples: torch.Tensor
     ):
-        """Save reference posterior samples for a given observation number
-        """
+        """Save reference posterior samples for a given observation number"""
         path = (
             self.path
             / "files"
@@ -425,8 +414,7 @@ class Task:
     def _save_true_parameters(
         self, num_observation: int, true_parameters: torch.Tensor
     ):
-        """Save true parameters (parameters that generated the data) for a given observation number
-        """
+        """Save true parameters (parameters that generated the data) for a given observation number"""
         path = (
             self.path
             / "files"
@@ -471,7 +459,8 @@ class Task:
                 num_unique = torch.unique(reference_posterior_samples, dim=0).shape[0]
                 assert num_unique == self.num_reference_posterior_samples
                 self._save_reference_posterior_samples(
-                    num_observation, reference_posterior_samples,
+                    num_observation,
+                    reference_posterior_samples,
                 )
 
         Parallel(n_jobs=n_jobs, verbose=50, backend="loky")(

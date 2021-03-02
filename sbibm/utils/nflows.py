@@ -95,7 +95,12 @@ def get_flow(
             ]
         )
 
-        transform = transforms.CompositeTransform([standardizing_transform, transform,])
+        transform = transforms.CompositeTransform(
+            [
+                standardizing_transform,
+                transform,
+            ]
+        )
 
         distribution = distributions_.StandardNormal((features,))
         neural_net = flows.Flow(transform, distribution, embedding)
@@ -245,7 +250,10 @@ def train_flow(
         sampler=SubsetRandomSampler(val_indices),
     )
 
-    optimizer = optim.Adam(list(flow.parameters()), lr=learning_rate,)
+    optimizer = optim.Adam(
+        list(flow.parameters()),
+        lr=learning_rate,
+    )
     # Keep track of best_validation log_prob seen so far.
     best_validation_log_prob = -1e100
     # Keep track of number of epochs since last improvement.

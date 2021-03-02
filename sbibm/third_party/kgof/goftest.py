@@ -40,10 +40,10 @@ class GofTest(with_metaclass(ABCMeta, object)):
     def perform_test(self, dat):
         """perform the goodness-of-fit test and return values computed in a dictionary:
         {
-            alpha: 0.01, 
-            pvalue: 0.0002, 
-            test_stat: 2.3, 
-            h0_rejected: True, 
+            alpha: 0.01,
+            pvalue: 0.0002,
+            test_stat: 2.3,
+            h0_rejected: True,
             time_secs: ...
         }
 
@@ -63,7 +63,7 @@ class GofTest(with_metaclass(ABCMeta, object)):
 
 class H0Simulator(with_metaclass(ABCMeta, object)):
     """
-    An abstract class representing a simulator to draw samples from the 
+    An abstract class representing a simulator to draw samples from the
     null distribution. For some tests, these are needed to conduct the test.
     """
 
@@ -83,8 +83,8 @@ class H0Simulator(with_metaclass(ABCMeta, object)):
         gof: a GofTest
         dat: a Data (observed data)
 
-        Simulate from the null distribution and return a dictionary. 
-        One of the item is 
+        Simulate from the null distribution and return a dictionary.
+        One of the item is
             sim_stats: a numpy array of stats.
         """
         raise NotImplementedError()
@@ -99,7 +99,7 @@ class FSSDH0SimCovObs(H0Simulator):
     An asymptotic null distribution simulator for FSSD.  Simulate from the
     asymptotic null distribution given by the weighted sum of chi-squares. The
     eigenvalues (weights) are computed from the covarince matrix wrt. the
-    observed sample. 
+    observed sample.
     This is not the correct null distribution; but has the correct asymptotic
     types-1 error at alpha.
     """
@@ -142,8 +142,8 @@ class FSSDH0SimCovDraw(H0Simulator):
     An asymptotic null distribution simulator for FSSD.  Simulate from the
     asymptotic null distribution given by the weighted sum of chi-squares. The
     eigenvalues (weights) are computed from the covarince matrix wrt. the
-    sample drawn from p (the density to test against). 
-    
+    sample drawn from p (the density to test against).
+
     - The UnnormalizedDensity p is required to implement get_datasource() method.
     """
 
@@ -194,7 +194,7 @@ class FSSDH0SimCovDraw(H0Simulator):
 class FSSD(GofTest):
     """
     Goodness-of-fit test using The Finite Set Stein Discrepancy statistic.
-    and a set of paired test locations. The statistic is n*FSSD^2. 
+    and a set of paired test locations. The statistic is n*FSSD^2.
     The statistic can be negative because of the unbiased estimator.
 
     H0: the sample follows p
@@ -218,7 +218,7 @@ class FSSD(GofTest):
         k: a DifferentiableKernel object
         V: J x dx numpy array of J locations to test the difference
         null_sim: an instance of H0Simulator for simulating from the null distribution.
-        alpha: significance level 
+        alpha: significance level
         """
         super(FSSD, self).__init__(p, alpha)
         self.k = k
@@ -334,10 +334,10 @@ class FSSD(GofTest):
         """
         Compute the mean and standard deviation of the statistic under H1.
         Return mean/sd.
-        use_2terms: True if the objective should include the first term in the power 
-            expression. This term carries the test threshold and is difficult to 
-            compute (depends on the optimized test locations). If True, then 
-            the objective will be -1/(n**0.5*sigma_H1) + n**0.5 FSSD^2/sigma_H1, 
+        use_2terms: True if the objective should include the first term in the power
+            expression. This term carries the test threshold and is difficult to
+            compute (depends on the optimized test locations). If True, then
+            the objective will be -1/(n**0.5*sigma_H1) + n**0.5 FSSD^2/sigma_H1,
             which ignores the test threshold in the first term.
         """
         X = dat.data()
@@ -362,7 +362,7 @@ class FSSD(GofTest):
     @staticmethod
     def ustat_h1_mean_variance(fea_tensor, return_variance=True, use_unbiased=True):
         """
-        Compute the mean and variance of the asymptotic normal distribution 
+        Compute the mean and variance of the asymptotic normal distribution
         under H1 of the test statistic.
 
         fea_tensor: feature tensor obtained from feature_tensor()
@@ -418,12 +418,12 @@ class FSSD(GofTest):
     @staticmethod
     def simulate_null_dist(eigs, J, n_simulate=2000, seed=7):
         """
-        Simulate the null distribution using the spectrums of the covariance 
+        Simulate the null distribution using the spectrums of the covariance
         matrix of the U-statistic. The simulated statistic is n*FSSD^2 where
         FSSD is an unbiased estimator.
 
         - eigs: a numpy array of estimated eigenvalues of the covariance
-          matrix. eigs is of length d*J, where d is the input dimension, and 
+          matrix. eigs is of length d*J, where d is the input dimension, and
         - J: the number of test locations.
 
         Return a numpy array of simulated statistics.
@@ -451,12 +451,12 @@ class FSSD(GofTest):
     @staticmethod
     def fssd_grid_search_kernel(p, dat, test_locs, list_kernel):
         """
-        Linear search for the best kernel in the list that maximizes 
+        Linear search for the best kernel in the list that maximizes
         the test power criterion, fixing the test locations to V.
 
         - p: UnnormalizedDensity
         - dat: a Data object
-        - list_kernel: list of kernel candidates 
+        - list_kernel: list of kernel candidates
 
         return: (best kernel index, array of test power criteria)
         """
@@ -493,10 +493,10 @@ class GaussFSSD(FSSD):
     @staticmethod
     def power_criterion(p, dat, gwidth, test_locs, reg=1e-2, use_2terms=False):
         """
-        use_2terms: True if the objective should include the first term in the power 
-            expression. This term carries the test threshold and is difficult to 
-            compute (depends on the optimized test locations). If True, then 
-            the objective will be -1/(n**0.5*sigma_H1) + n**0.5 FSSD^2/sigma_H1, 
+        use_2terms: True if the objective should include the first term in the power
+            expression. This term carries the test threshold and is difficult to
+            compute (depends on the optimized test locations). If True, then
+            the objective will be -1/(n**0.5*sigma_H1) + n**0.5 FSSD^2/sigma_H1,
             which ignores the test threshold in the first term.
         """
         k = kernel.KGauss(gwidth)
@@ -505,7 +505,7 @@ class GaussFSSD(FSSD):
     @staticmethod
     def optimize_auto_init(p, dat, J, **ops):
         """
-        Optimize parameters by calling optimize_locs_widths(). Automatically 
+        Optimize parameters by calling optimize_locs_widths(). Automatically
         initialize the test locations and the Gaussian width.
 
         Return optimized locations, Gaussian width, optimization info
@@ -542,10 +542,10 @@ class GaussFSSD(FSSD):
     @staticmethod
     def grid_search_gwidth(p, dat, test_locs, list_gwidth):
         """
-        Linear search for the best Gaussian width in the list that maximizes 
-        the test power criterion, fixing the test locations. 
+        Linear search for the best Gaussian width in the list that maximizes
+        the test power criterion, fixing the test locations.
 
-        - V: a J x dx np-array for J test locations 
+        - V: a J x dx np-array for J test locations
 
         return: (best width index, list of test power objectives)
         """
@@ -569,9 +569,9 @@ class GaussFSSD(FSSD):
         use_2terms=False,
     ):
         """
-        Optimize the test locations and the Gaussian kernel width by 
+        Optimize the test locations and the Gaussian kernel width by
         maximizing a test power criterion. data should not be the same data as
-        used in the actual test (i.e., should be a held-out set). 
+        used in the actual test (i.e., should be a held-out set).
         This function is deterministic.
 
         - data: a Data object
@@ -591,9 +591,9 @@ class GaussFSSD(FSSD):
           criterion, the objective function will also include the first term
           that is dropped.
 
-        #- If the lb, ub bounds are None, use fraction of the median heuristics 
+        #- If the lb, ub bounds are None, use fraction of the median heuristics
         #    to automatically set the bounds.
-        
+
         Return (V test_locs, gaussian width, optimization info log)
         """
         J = test_locs0.shape[0]
@@ -705,8 +705,8 @@ class IMQFSSD(FSSD):
     """
     FSSD using the inverse multiquadric kernel (IMQ).
 
-    k(x,y) = (c^2 + ||x-y||^2)^b 
-    where c > 0 and b < 0. 
+    k(x,y) = (c^2 + ||x-y||^2)^b
+    where c > 0 and b < 0.
     """
 
     def __init__(self, p, b, c, V, alpha=0.01, n_simulate=3000, seed=10):
@@ -789,7 +789,7 @@ class IMQFSSD(FSSD):
         - locs_bounds_frac: When making box bounds for the test_locs, extend
             the box defined by coordinate-wise min-max by std of each coordinate
             multiplied by this number.
-        
+
         Return (V test_locs, optimization info log)
         """
         J = test_locs0.shape[0]
@@ -869,9 +869,9 @@ class IMQFSSD(FSSD):
     ):
         """
         Optimize the test locations and the the two parameters (b and c) of the
-        IMQ kernel by maximizing the test power criterion. 
-             k(x,y) = (c^2 + ||x-y||^2)^b 
-            where c > 0 and b < 0. 
+        IMQ kernel by maximizing the test power criterion.
+             k(x,y) = (c^2 + ||x-y||^2)^b
+            where c > 0 and b < 0.
         data should not be the same data as used in the actual test (i.e.,
         should be a held-out set). This function is deterministic.
 
@@ -893,8 +893,8 @@ class IMQFSSD(FSSD):
         - c_lb: absolute lower bound on c. c is always > 0.
         - c_ub: absolute upper bound on c
 
-        #- If the lb, ub bounds are None 
-        
+        #- If the lb, ub bounds are None
+
         Return (V test_locs, b, c, optimization info log)
         """
 
@@ -989,7 +989,7 @@ class IMQFSSD(FSSD):
 
 class KernelSteinTest(GofTest):
     """
-    Goodness-of-fit test using kernelized Stein discrepancy test of 
+    Goodness-of-fit test using kernelized Stein discrepancy test of
     Chwialkowski et al., 2016 and Liu et al., 2016 in ICML 2016.
     Mainly follow the details in Chwialkowski et al., 2016.
     The test statistic is n*V_n where V_n is a V-statistic.
@@ -1014,10 +1014,10 @@ class KernelSteinTest(GofTest):
         """
         p: an instance of UnnormalizedDensity
         k: a KSTKernel object
-        bootstrapper: a function: (n) |-> numpy array of n weights 
-            to be multiplied in the double sum of the test statistic for generating 
+        bootstrapper: a function: (n) |-> numpy array of n weights
+            to be multiplied in the double sum of the test statistic for generating
             bootstrap samples from the null distribution.
-        alpha: significance level 
+        alpha: significance level
         n_simulate: The number of times to simulate from the null distribution
             by bootstrapping. Must be a positive integer.
         """
@@ -1111,7 +1111,7 @@ class LinearKernelSteinTest(GofTest):
     """
     Goodness-of-fit test using the linear-version of kernelized Stein
     discrepancy test of Liu et al., 2016 in ICML 2016. Described in Liu et al.,
-    2016. 
+    2016.
     - This test runs in O(n d^2) time.
     - test stat = sqrt(n_half)*linear-time Stein discrepancy
     - Asymptotically normal under both H0 and H1.
@@ -1126,7 +1126,7 @@ class LinearKernelSteinTest(GofTest):
         """
         p: an instance of UnnormalizedDensity
         k: a LinearKSTKernel object
-        alpha: significance level 
+        alpha: significance level
         n_simulate: The number of times to simulate from the null distribution
             by bootstrapping. Must be a positive integer.
         """
@@ -1197,8 +1197,8 @@ class LinearKernelSteinTest(GofTest):
 
 class SteinWitness(object):
     """
-    Construct a callable object representing the Stein witness function. 
-    The witness function g is defined as in Eq. 1 of 
+    Construct a callable object representing the Stein witness function.
+    The witness function g is defined as in Eq. 1 of
 
         A Linear-Time Kernel Goodness-of-Fit Test
         Wittawat Jitkrittum, Wenkai Xu, Zoltan Szabo, Kenji Fukumizu,
@@ -1208,11 +1208,11 @@ class SteinWitness(object):
     The witness function requires taking an expectation over the sample
     generating distribution. This is approximated by an empirical
     expectation using the sample in the input (dat). The witness function
-    is a d-variate (d = dimension of the data) function, which depends on 
+    is a d-variate (d = dimension of the data) function, which depends on
     the kernel k and the model p.
 
     The constructed object can be called as if it is a function: (J x d) numpy
-    array |-> (J x d) outputs 
+    array |-> (J x d) outputs
     """
 
     def __init__(self, p, k, dat):

@@ -11,7 +11,9 @@ from sbibm.tasks.task import Task
 
 class GaussianMixture(Task):
     def __init__(
-        self, dim: int = 2, prior_bound: float = 10.0,
+        self,
+        dim: int = 2,
+        prior_bound: float = 10.0,
     ):
         """Gaussian Mixture.
 
@@ -94,7 +96,7 @@ class GaussianMixture(Task):
             num_observation: Observation number
             observation: Instead of passing an observation number, an observation may be
                 passed directly
-        
+
         Returns:
             Samples from reference posterior
         """

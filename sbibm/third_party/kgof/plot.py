@@ -76,7 +76,7 @@ def get_func2label_map():
 
 def func_plot_fmt_map():
     """
-    Return a map from job function names to matplotlib plot styles 
+    Return a map from job function names to matplotlib plot styles
     """
     # line_styles = ['o-', 'x-',  '*-', '-_', 'D-', 'h-', '+-', 's-', 'v-',
     #               ',-', '1-']
@@ -87,7 +87,7 @@ def func_plot_fmt_map():
 
 class PlotValues(object):
     """
-    An object encapsulating values of a plot where there are many curves, 
+    An object encapsulating values of a plot where there are many curves,
     each corresponding to one method, with common x-axis values.
     """
 
@@ -95,7 +95,7 @@ class PlotValues(object):
         """
         xvalues: 1d numpy array of x-axis values
         methods: a list of method names
-        plot_matrix: len(methods) x len(xvalues) 2d numpy array containing 
+        plot_matrix: len(methods) x len(xvalues) 2d numpy array containing
             values that can be used to plot
         """
         self.xvalues = xvalues
@@ -127,14 +127,14 @@ def plot_prob_reject(
 ):
     """
     plot the empirical probability that the statistic is above the threshold.
-    This can be interpreted as type-1 error (when H0 is true) or test power 
+    This can be interpreted as type-1 error (when H0 is true) or test power
     (when H1 is true). The plot is against the specified x-axis.
 
-    - ex: experiment number 
+    - ex: experiment number
     - fname: file name of the aggregated result
-    - func_xvalues: function taking aggregated results dictionary and return the values 
-        to be used for the x-axis values.            
-    - xlabel: label of the x-axis. 
+    - func_xvalues: function taking aggregated results dictionary and return the values
+        to be used for the x-axis values.
+    - xlabel: label of the x-axis.
     - func_title: a function: results dictionary -> title of the plot
     - return_plot_values: if true, also return a PlotValues as the second
       output value.
@@ -268,11 +268,11 @@ def box_meshgrid(func, xbound, ybound, nx=50, ny=50):
     """
     Form a meshed grid (to be used with a contour plot) on a box
     specified by xbound, ybound. Evaluate the grid with [func]: (n x 2) -> n.
-    
+
     - xbound: a tuple (xmin, xmax)
     - ybound: a tuple (ymin, ymax)
     - nx: number of points to evluate in the x direction
-    
+
     return XX, YY, ZZ where XX is a 2D nd-array of size nx x ny
     """
 
@@ -300,7 +300,7 @@ def box_meshgrid(func, xbound, ybound, nx=50, ny=50):
 def get_density_cmap():
     """
     Return a colormap for plotting the model density p.
-    Red = high density 
+    Red = high density
     white = very low density.
     Varying from white (low) to red (high).
     """

@@ -96,7 +96,8 @@ def run(
         z_score_theta=z_score_theta,
     )
     inference_method = inference.SNLE_A(
-        density_estimator=density_estimator_fun, prior=prior,
+        density_estimator=density_estimator_fun,
+        prior=prior,
     )
 
     posteriors = []

@@ -31,7 +31,7 @@ def warn_bounded_domain(self):
 
 def from_log_den(d, f):
     """
-    Construct an UnnormalizedDensity from the function f, implementing the log 
+    Construct an UnnormalizedDensity from the function f, implementing the log
     of an unnormalized density.
 
     f: X -> den where X: n x d and den is a numpy array of length n.
@@ -112,7 +112,7 @@ class UnnormalizedDensity(with_metaclass(ABCMeta, object)):
 
 class UDFromCallable(UnnormalizedDensity):
     """
-    UnnormalizedDensity constructed from the specified implementations of 
+    UnnormalizedDensity constructed from the specified implementations of
     log_den() and grad_log() as callable objects.
     """
 
@@ -162,7 +162,7 @@ class IsotropicNormal(UnnormalizedDensity):
 
     def __init__(self, mean, variance):
         """
-        mean: a numpy array of length d for the mean 
+        mean: a numpy array of length d for the mean
         variance: a positive floating-point number for the variance.
         """
         self.mean = mean
@@ -227,7 +227,7 @@ class Normal(UnnormalizedDensity):
 
 class IsoGaussianMixture(UnnormalizedDensity):
     """
-    UnnormalizedDensity of a Gaussian mixture in R^d where each component 
+    UnnormalizedDensity of a Gaussian mixture in R^d where each component
     is an isotropic multivariate normal distribution.
 
     Let k be the number of mixture components.
@@ -311,7 +311,7 @@ class IsoGaussianMixture(UnnormalizedDensity):
 
 class GaussianMixture(UnnormalizedDensity):
     """
-    UnnormalizedDensity of a Gaussian mixture in R^d where each component 
+    UnnormalizedDensity of a Gaussian mixture in R^d where each component
     can be arbitrary. This is the most general form of a Gaussian mixture.
 
     Let k be the number of mixture components.
@@ -400,7 +400,7 @@ class GaussBernRBM(UnnormalizedDensity):
 
     def __init__(self, B, b, c):
         """
-        B: a dx x dh matrix 
+        B: a dx x dh matrix
         b: a numpy array of length dx
         c: a numpy array of length dh
         """
@@ -470,7 +470,7 @@ class ISIPoissonLinear(UnnormalizedDensity):
 
     def __init__(self, b):
         """
-        b: slope of the linear function 
+        b: slope of the linear function
         """
         warn_bounded_domain(self)
         self.b = b
@@ -586,7 +586,7 @@ class ISILogPoissonLinear(UnnormalizedDensity):
 
     def __init__(self, b):
         """
-        b: slope of the linear function 
+        b: slope of the linear function
         """
         warn_bounded_domain(self)
         self.b = b

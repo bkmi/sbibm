@@ -371,13 +371,13 @@ def job_kstein_med(p, data_source, tr, te, r):
 def job_kstein_imq(p, data_source, tr, te, r):
     """
     Kernel Stein discrepancy test of Liu et al., 2016 and Chwialkowski et al.,
-    2016. Use full sample. Use the inverse multiquadric kernel (IMQ) studied 
-    in 
+    2016. Use full sample. Use the inverse multiquadric kernel (IMQ) studied
+    in
 
     Measuring Sample Quality with Kernels
-    Gorham and Mackey 2017. 
+    Gorham and Mackey 2017.
 
-    Parameters are fixed to the recommented values: beta = b = -0.5, c = 1. 
+    Parameters are fixed to the recommented values: beta = b = -0.5, c = 1.
     """
     # full data
     data = tr + te
@@ -411,7 +411,7 @@ def job_lin_kstein_med(p, data_source, tr, te, r):
 def job_mmd_med(p, data_source, tr, te, r):
     """
     MMD test of Gretton et al., 2012 used as a goodness-of-fit test.
-    Require the ability to sample from p i.e., the UnnormalizedDensity p has 
+    Require the ability to sample from p i.e., the UnnormalizedDensity p has
     to be able to return a non-None from get_datasource()
     """
     # full data
@@ -440,7 +440,7 @@ def job_mmd_med(p, data_source, tr, te, r):
 def job_mmd_opt(p, data_source, tr, te, r):
     """
     MMD test of Gretton et al., 2012 used as a goodness-of-fit test.
-    Require the ability to sample from p i.e., the UnnormalizedDensity p has 
+    Require the ability to sample from p i.e., the UnnormalizedDensity p has
     to be able to return a non-None from get_datasource()
 
     With optimization. Gaussian kernel.
@@ -636,7 +636,7 @@ def gaussbern_rbm_probs(stds_perturb_B, dx=50, dh=10, n=sample_size):
 def get_pqsource_list(prob_label):
     """
     Return [(prob_param, p, ds) for ... ], a list of tuples
-    where 
+    where
     - prob_param: a problem parameters. Each parameter has to be a
       scalar (so that we can plot them later). Parameters are preferably
       positive integers.

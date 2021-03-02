@@ -33,7 +33,7 @@ class GaussMETest(gof.GofTest):
     """
     Goodness-of-fit test by drawing sample from the density p and test with
     the mean embeddings test of Jitkrittum et al., 2016 (NIPS 2016). Use a
-    Gaussian kernel. Test locations are specified, not optimized. 
+    Gaussian kernel. Test locations are specified, not optimized.
 
     H0: the sample follows p
     H1: the sample does not follow p
@@ -46,7 +46,7 @@ class GaussMETest(gof.GofTest):
         p: an instance of UnnormalizedDensity
         gwidth2: Gaussian width squared for the Gaussian kernel
         test_locs: J x d numpy array of J locations to test the difference
-        alpha: significance level 
+        alpha: significance level
         """
         super(GaussMETest, self).__init__(p, alpha)
         self.gwidth2 = gwidth2
@@ -105,8 +105,8 @@ class GaussMETestOpt(gof.GofTest):
     """
     Goodness-of-fit test by drawing sample from the density p and test with
     the mean embeddings test of Jitkrittum et al., 2016 (NIPS 2016). Use a
-    Gaussian kernel. 
-    
+    Gaussian kernel.
+
     For each given dataset dat, automatically optimize the test locations and
     the Gaussian width by dividing the dat into two disjoint halves: tr
     (training) and te (test set). The size of tr is specified by tr_proportion.
@@ -122,7 +122,7 @@ class GaussMETestOpt(gof.GofTest):
         p: an instance of UnnormalizedDensity
         n_locs: number of test locations to use
         tr_proportion: proportion of the training set. A number in (0, 1).
-        alpha: significance level 
+        alpha: significance level
         """
         super(GaussMETestOpt, self).__init__(p, alpha)
         if tr_proportion <= 0 or tr_proportion >= 1:

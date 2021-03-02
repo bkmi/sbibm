@@ -19,12 +19,12 @@ import autograd.numpy as np
 
 class ContextTimer(object):
     """
-    A class used to time an execution of a code snippet. 
+    A class used to time an execution of a code snippet.
     Use it with with .... as ...
-    For example, 
+    For example,
 
         with ContextTimer() as t:
-            # do something 
+            # do something
         time_spent = t.secs
 
     From https://www.huyng.com/posts/python-performance-analysis
@@ -50,7 +50,7 @@ class ContextTimer(object):
 class NumpySeedContext(object):
     """
     A context manager to reset the random seed by numpy.random.seed(..).
-    Set the seed back at the end of the block. 
+    Set the seed back at the end of the block.
     """
 
     def __init__(self, seed):
@@ -132,7 +132,7 @@ def meddistance(X, subsample=None, mean_on_fail=True):
     ----------
     X : n x d numpy array
     mean_on_fail: True/False. If True, use the mean when the median distance is 0.
-        This can happen especially, when the data are discrete e.g., 0/1, and 
+        This can happen especially, when the data are discrete e.g., 0/1, and
         there are more slightly more 0 than 1. In this case, the m
 
     Return
@@ -161,7 +161,7 @@ def meddistance(X, subsample=None, mean_on_fail=True):
 
 
 def is_real_num(X):
-    """return true if x is a real number. 
+    """return true if x is a real number.
     Work for a numpy array as well. Return an array of the same dimension."""
 
     def each_elem_true(x):
@@ -214,11 +214,11 @@ def subsample_rows(X, k, seed=29):
 
 def fit_gaussian_draw(X, J, seed=28, reg=1e-7, eig_pow=1.0):
     """
-    Fit a multivariate normal to the data X (n x d) and draw J points 
-    from the fit. 
+    Fit a multivariate normal to the data X (n x d) and draw J points
+    from the fit.
     - reg: regularizer to use with the covariance matrix
-    - eig_pow: raise eigenvalues of the covariance matrix to this power to construct 
-        a new covariance matrix before drawing samples. Useful to shrink the spread 
+    - eig_pow: raise eigenvalues of the covariance matrix to this power to construct
+        a new covariance matrix before drawing samples. Useful to shrink the spread
         of the variance.
     """
     with NumpySeedContext(seed=seed):
@@ -238,10 +238,10 @@ def fit_gaussian_draw(X, J, seed=28, reg=1e-7, eig_pow=1.0):
 
 def bound_by_data(Z, Data):
     """
-    Determine lower and upper bound for each dimension from the Data, and project 
+    Determine lower and upper bound for each dimension from the Data, and project
     Z so that all points in Z live in the bounds.
 
-    Z: m x d 
+    Z: m x d
     Data: n x d
 
     Return a projected Z of size m x d.
@@ -260,8 +260,8 @@ def bound_by_data(Z, Data):
 def one_of_K_code(arr):
     """
     Make a one-of-K coding out of the numpy array.
-    For example, if arr = ([0, 1, 0, 2]), then return a 2d array of the form 
-     [[1, 0, 0], 
+    For example, if arr = ([0, 1, 0, 2]), then return a 2d array of the form
+     [[1, 0, 0],
       [0, 1, 0],
       [1, 0, 0],
       [0, 0, 1]]
@@ -335,7 +335,7 @@ def matrix_inner_prod(A, B):
 
 def get_classpath(obj):
     """
-    Return the full module and class path of the obj. For instance, 
+    Return the full module and class path of the obj. For instance,
     kgof.density.IsotropicNormal
 
     Return a string.

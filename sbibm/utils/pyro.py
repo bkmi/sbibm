@@ -161,9 +161,9 @@ def get_log_prob_grad_fn(
     """
     Given a Python callable with Pyro primitives, generates the following model-specific
     functions:
-    - a log prob grad function whose input are parameters and whose 
+    - a log prob grad function whose input are parameters and whose
       output is the grd of log prob of the model wrt parameters
-    - transforms to transform latent sites of `model` to 
+    - transforms to transform latent sites of `model` to
       unconstrained space
 
     Args:
@@ -252,7 +252,7 @@ def make_log_prob_grad_fn(log_prob_fn):
     Args:
         log_prob_fn: python callable that takes in a dictionary of parameters
         and returns the log prob.
-    
+
     Returns:
         `log_prob_grad_fn`
 

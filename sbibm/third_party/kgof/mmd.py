@@ -35,7 +35,7 @@ import scipy.stats as stats
 class QuadMMDGof(gof.GofTest):
     """
     Goodness-of-fit test by drawing sample from the density p and test with
-    the MMD test of Gretton et al., 2012. 
+    the MMD test of Gretton et al., 2012.
 
     H0: the sample follows p
     H1: the sample does not follow p
@@ -47,9 +47,9 @@ class QuadMMDGof(gof.GofTest):
         """
         p: an instance of UnnormalizedDensity
         k: an instance of Kernel
-        n_permute: number of times to permute the samples to simulate from the 
+        n_permute: number of times to permute the samples to simulate from the
             null distribution (permutation test)
-        alpha: significance level 
+        alpha: significance level
         seed: random seed
         """
         super(QuadMMDGof, self).__init__(p, alpha)
@@ -119,9 +119,9 @@ class QuadMMDGofOpt(gof.GofTest):
         """
         p: an instance of UnnormalizedDensity
         k: an instance of Kernel
-        n_permute: number of times to permute the samples to simulate from the 
+        n_permute: number of times to permute the samples to simulate from the
             null distribution (permutation test)
-        alpha: significance level 
+        alpha: significance level
         seed: random seed
         """
         super(QuadMMDGofOpt, self).__init__(p, alpha)
@@ -147,7 +147,7 @@ class QuadMMDGofOpt(gof.GofTest):
         candidate_kernels: a list of Kernel's to choose from
         tr_proportion: proportion of sample to be used to choosing the best
             kernel
-        reg: regularization parameter for the test power criterion 
+        reg: regularization parameter for the test power criterion
         """
         with util.ContextTimer() as t:
             seed = self.seed

@@ -27,7 +27,7 @@ def get_kde(
         X: Samples
         bandwidth: Bandwidth method
         transform: Optional transform
-        sample_weight: Sample weights attached to the data 
+        sample_weight: Sample weights attached to the data
         verbose: Verbosity level
 
     References:

@@ -19,7 +19,7 @@ import scipy.stats as stats
 
 class Data(object):
     """
-    Class representing a dataset i.e., en encapsulation of a data matrix 
+    Class representing a dataset i.e., en encapsulation of a data matrix
     whose rows are vectors drawn from a distribution.
     """
 
@@ -59,7 +59,7 @@ class Data(object):
         return self.X
 
     def split_tr_te(self, tr_proportion=0.5, seed=820, return_tr_ind=False):
-        """Split the dataset into training and test sets.         
+        """Split the dataset into training and test sets.
 
         Return (Data for tr, Data for te)"""
         X = self.X
@@ -84,7 +84,7 @@ class Data(object):
 
     def clone(self):
         """
-        Return a new Data object with a separate copy of each internal 
+        Return a new Data object with a separate copy of each internal
         variable, and with the same content.
         """
         nX = np.copy(self.X)
@@ -106,22 +106,22 @@ class Data(object):
 
 class DataSource(with_metaclass(ABCMeta, object)):
     """
-    A source of data allowing resampling. Subclasses may prefix 
-    class names with DS. 
+    A source of data allowing resampling. Subclasses may prefix
+    class names with DS.
     """
 
     @abstractmethod
     def sample(self, n, seed):
-        """Return a Data. Returned result should be deterministic given 
+        """Return a Data. Returned result should be deterministic given
         the input (n, seed)."""
         raise NotImplementedError()
 
     def dim(self):
         """
-       Return the dimension of the data.  If possible, subclasses should
-       override this. Determining the dimension by sampling may not be
-       efficient, especially if the sampling relies on MCMC.
-       """
+        Return the dimension of the data.  If possible, subclasses should
+        override this. Determining the dimension by sampling may not be
+        efficient, especially if the sampling relies on MCMC.
+        """
         dat = self.sample(n=1, seed=3)
         return dat.dim()
 
@@ -137,7 +137,7 @@ class DSIsotropicNormal(DataSource):
 
     def __init__(self, mean, variance):
         """
-        mean: a numpy array of length d for the mean 
+        mean: a numpy array of length d for the mean
         variance: a positive floating-point number for the variance.
         """
         assert len(mean.shape) == 1
@@ -180,7 +180,7 @@ class DSNormal(DataSource):
 
 class DSIsoGaussianMixture(DataSource):
     """
-    A DataSource implementing a Gaussian mixture in R^d where each component 
+    A DataSource implementing a Gaussian mixture in R^d where each component
     is an isotropic multivariate normal distribution.
 
     Let k be the number of mixture components.
@@ -237,7 +237,7 @@ class DSIsoGaussianMixture(DataSource):
 
 class DSGaussianMixture(DataSource):
     """
-    A DataSource implementing a Gaussian mixture in R^d where each component 
+    A DataSource implementing a Gaussian mixture in R^d where each component
     is an arbitrary Gaussian distribution.
 
     Let k be the number of mixture components.
@@ -304,7 +304,7 @@ class DSLaplace(DataSource):
 
     def __init__(self, d, loc=0, scale=1):
         """
-        loc: location 
+        loc: location
         scale: scale parameter.
         Described in https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.laplace.html#numpy.random.laplace
         """
@@ -345,7 +345,7 @@ class DSGaussBernRBM(DataSource):
     """
     A DataSource implementing a Gaussian-Bernoulli Restricted Boltzmann Machine.
     The probability of the latent vector h is controlled by the vector c.
-    The parameterization of the Gaussian-Bernoulli RBM is given in 
+    The parameterization of the Gaussian-Bernoulli RBM is given in
     density.GaussBernRBM.
 
     - It turns out that this is equivalent to drawing a vector of {-1, 1} for h
@@ -355,7 +355,7 @@ class DSGaussBernRBM(DataSource):
 
     def __init__(self, B, b, c, burnin=2000):
         """
-        B: a dx x dh matrix 
+        B: a dx x dh matrix
         b: a numpy array of length dx
         c: a numpy array of length dh
         burnin: burn-in iterations when doing Gibbs sampling
@@ -642,7 +642,7 @@ class DSISILogPoissonLinear(DataSource):
 
 class DSISIPoisson2D(DataSource):
     """
-     A DataSource implementing non homogenous poisson process.
+    A DataSource implementing non homogenous poisson process.
     """
 
     def __init__(self, intensity="quadratic", w=1.0):
@@ -696,7 +696,7 @@ class DSISIPoisson2D(DataSource):
 
 class DSISISigmoidPoisson2D(DataSource):
     """
-     A DataSource implementing non homogenous poisson process.
+    A DataSource implementing non homogenous poisson process.
     """
 
     def __init__(self, intensity="quadratic", w=1.0, a=1.0):
@@ -753,7 +753,7 @@ class DSISISigmoidPoisson2D(DataSource):
 
 class DSPoisson2D(DataSource):
     """
-     A DataSource implementing non homogenous poisson process.
+    A DataSource implementing non homogenous poisson process.
     """
 
     def __init__(self, w=1.0):
@@ -814,7 +814,7 @@ class DSPoisson2D(DataSource):
 
 class DSResample(DataSource):
     """
-    A DataSource which subsamples without replacement from the specified 
+    A DataSource which subsamples without replacement from the specified
     numpy array (n x d).
     """
 
@@ -843,7 +843,7 @@ class DSResample(DataSource):
 
 class DSGaussCosFreqs(DataSource):
     """
-    A DataSource to sample from the density 
+    A DataSource to sample from the density
     p(x) \propto exp(-||x||^2/2sigma^2)*(1+ prod_{i=1}^d cos(w_i*x_i))
 
     where w1,..wd are frequencies of each dimension.

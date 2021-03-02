@@ -52,25 +52,25 @@ class KSTKernel(with_metaclass(ABCMeta, Kernel)):
     @abstractmethod
     def gradX_Y(self, X, Y, dim):
         """
-       Compute the gradient with respect to the dimension dim of X in k(X, Y).
+        Compute the gradient with respect to the dimension dim of X in k(X, Y).
 
-       X: nx x d
-       Y: ny x d
+        X: nx x d
+        Y: ny x d
 
-       Return a numpy array of size nx x ny.
-       """
+        Return a numpy array of size nx x ny.
+        """
         raise NotImplementedError()
 
     @abstractmethod
     def gradY_X(self, X, Y, dim):
         """
-       Compute the gradient with respect to the dimension dim of Y in k(X, Y).
+        Compute the gradient with respect to the dimension dim of Y in k(X, Y).
 
-       X: nx x d
-       Y: ny x d
+        X: nx x d
+        Y: ny x d
 
-       Return a numpy array of size nx x ny.
-       """
+        Return a numpy array of size nx x ny.
+        """
         raise NotImplementedError()
 
     @abstractmethod
@@ -100,27 +100,27 @@ class LinearKSTKernel(with_metaclass(ABCMeta, Kernel)):
     @abstractmethod
     def pair_gradX_Y(self, X, Y):
         """
-       Compute the gradient with respect to X in k(X, Y), evaluated at the
-       specified X and Y.
+        Compute the gradient with respect to X in k(X, Y), evaluated at the
+        specified X and Y.
 
-       X: n x d
-       Y: n x d
+        X: n x d
+        Y: n x d
 
-       Return a numpy array of size n x d
-       """
+        Return a numpy array of size n x d
+        """
         raise NotImplementedError()
 
     @abstractmethod
     def pair_gradY_X(self, X, Y):
         """
-       Compute the gradient with respect to Y in k(X, Y), evaluated at the
-       specified X and Y.
+        Compute the gradient with respect to Y in k(X, Y), evaluated at the
+        specified X and Y.
 
-       X: n x d
-       Y: n x d
+        X: n x d
+        Y: n x d
 
-       Return a numpy array of size n x d
-       """
+        Return a numpy array of size n x d
+        """
         raise NotImplementedError()
 
     @abstractmethod
@@ -228,8 +228,7 @@ class KIMQ(DifferentiableKernel, KSTKernel):
         return K
 
     def pair_eval(self, X, Y):
-        """Evaluate k(x1, y1), k(x2, y2), ...
-        """
+        """Evaluate k(x1, y1), k(x2, y2), ..."""
         assert X.shape[0] == Y.shape[0]
         b = self.b
         c = self.c
@@ -375,14 +374,14 @@ class KGauss(DifferentiableKernel, KSTKernel, LinearKSTKernel):
 
     def pair_gradY_X(self, X, Y):
         """
-       Compute the gradient with respect to Y in k(X, Y), evaluated at the
-       specified X and Y.
+        Compute the gradient with respect to Y in k(X, Y), evaluated at the
+        specified X and Y.
 
-       X: n x d
-       Y: n x d
+        X: n x d
+        Y: n x d
 
-       Return a numpy array of size n x d
-       """
+        Return a numpy array of size n x d
+        """
         return -self.pair_gradX_Y(X, Y)
 
     def gradXY_sum(self, X, Y):
