@@ -1,9 +1,10 @@
 import numpy as np
 import torch
-from sbibm.utils.nflows import FlowWrapper
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from torch.distributions.transformed_distribution import TransformedDistribution
+
+from sbibm.utils.nflows import FlowWrapper
 
 
 def wrap_prior_dist(prior_dist, transforms):

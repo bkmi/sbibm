@@ -1,6 +1,7 @@
 import pytest
-import sbibm
 import torch
+
+import sbibm
 
 
 @pytest.mark.parametrize(

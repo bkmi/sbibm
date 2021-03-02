@@ -8,6 +8,7 @@ import pyro
 import scipy.stats
 import torch
 from pyro import distributions as pdist
+
 from sbibm.tasks.simulator import Simulator
 from sbibm.tasks.task import Task
 from sbibm.utils.io import get_tensor_from_csv

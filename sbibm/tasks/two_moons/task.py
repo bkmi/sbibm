@@ -4,9 +4,10 @@ from typing import Any, Callable, Dict, Optional, Union
 
 import numpy as np
 import pyro
-import sbibm
 import torch
 from pyro import distributions as pdist
+
+import sbibm
 from sbibm.tasks.simulator import Simulator
 from sbibm.tasks.task import Task
 from sbibm.utils.pyro import make_log_prob_grad_fn

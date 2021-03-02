@@ -2,12 +2,13 @@ from typing import Optional
 
 import numpy as np
 import pyabcranger
-import sbibm
 import torch
 from sbi.simulators.simutils import simulate_in_batches
+from tqdm import tqdm
+
+import sbibm
 from sbibm.tasks.task import Task
 from sbibm.utils.torch import sample_with_weights
-from tqdm import tqdm
 
 from .abcranger_utils import estimparam_args
 

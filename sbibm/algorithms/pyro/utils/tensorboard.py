@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+
 from sbibm.utils.tensorboard import tb_plot_posterior
 
 

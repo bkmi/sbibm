@@ -4,6 +4,7 @@ import time
 
 import numpy as np
 import torch
+
 from sbibm.third_party.igms.main import ExpQuadKernel as tp_ExpQuadKernel
 from sbibm.third_party.igms.main import mmd2_unbiased as tp_mmd2_unbiased
 from sbibm.third_party.torch_two_sample.main import MMDStatistic as tp_MMDStatistic

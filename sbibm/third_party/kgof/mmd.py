@@ -24,12 +24,13 @@ import freqopttest.data as fdata
 # Require freqopttest https://github.com/wittawatj/interpretable-test
 import freqopttest.tst as tst
 import matplotlib.pyplot as plt
+import scipy
+import scipy.stats as stats
+
 import sbibm.third_party.kgof.data as data
 import sbibm.third_party.kgof.goftest as gof
 import sbibm.third_party.kgof.kernel as kernel
 import sbibm.third_party.kgof.util as util
-import scipy
-import scipy.stats as stats
 
 
 class QuadMMDGof(gof.GofTest):

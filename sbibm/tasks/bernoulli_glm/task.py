@@ -5,6 +5,7 @@ import numpy as np
 import pyro
 import pyro.distributions as pdist
 import torch
+
 from sbibm.tasks.simulator import Simulator
 from sbibm.tasks.task import Task
 from sbibm.utils.io import get_tensor_from_csv
