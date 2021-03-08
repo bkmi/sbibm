@@ -28,6 +28,11 @@ def get_task(task_name: str, *args: Any, **kwargs: Any) -> Task:
 
         return BernoulliGLM(*args, summary="raw", **kwargs)
 
+    elif task_name == "gaussian_correlated_uniform":
+        from sbibm.tasks.gaussian_correlated_uniform.task import GaussianCorrelatedUniform
+
+        return GaussianCorrelatedUniform(*args, **kwargs)
+
     elif task_name == "gaussian_linear":
         from sbibm.tasks.gaussian_linear.task import GaussianLinear
 
