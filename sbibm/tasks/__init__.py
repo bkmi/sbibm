@@ -18,6 +18,16 @@ def get_task(task_name: str, *args: Any, **kwargs: Any) -> Task:
 
         return LotkaVolterra(*args, **kwargs)
 
+    elif task_name == "eggbox":
+        from sbibm.tasks.eggbox.task import EggBox
+
+        return EggBox(*args, **kwargs)
+
+    elif task_name == "torus":
+        from sbibm.tasks.torus.task import Torus
+
+        return Torus(*args, **kwargs)
+
     elif task_name == "bernoulli_glm":
         from sbibm.tasks.bernoulli_glm.task import BernoulliGLM
 
