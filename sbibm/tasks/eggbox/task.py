@@ -189,7 +189,7 @@ class EggBox(Task):
         posterior.make_posterior_ppf(n_interpolation_quantiles, epsilon, n_jobs)
         return posterior.sample((num_samples,))
 
-    def _setup(self, create_reference: bool = True, **kwargs: Any):
+    def _setup(self, n_jobs: int = -1, create_reference: bool = True, **kwargs: Any):
         """Setup the task: generate observations and reference posterior samples
 
         In most cases, you don't need to execute this method, since its results are stored to disk.
@@ -200,6 +200,7 @@ class EggBox(Task):
             n_jobs: Number of to use for Joblib
             create_reference: If False, skips reference creation
         """
+        from joblib import Parallel, delayed
 
         def run(num_observation, observation_seed, **kwargs):
             np.random.seed(observation_seed)
@@ -207,14 +208,17 @@ class EggBox(Task):
             self._save_observation_seed(num_observation, observation_seed)
 
             prior = self.get_prior()
-            prior_sample = prior(num_samples=1)
-            true_parameters = (
-                torch.ones_like(prior_sample) * 0.25
-            )  # Always generate an observation which makes the eggbox.
+            if num_observation == 1:
+                true_parameters = torch.ones_like(prior(num_samples=1)) * 0.25
+            else:
+                true_parameters = prior(num_samples=1) * 0.25
             self._save_true_parameters(num_observation, true_parameters)
 
             simulator = self.get_simulator()
-            observation = simulator(true_parameters)
+            if num_observation == 1:
+                observation = true_parameters.clone()
+            else:
+                observation = simulator(true_parameters)
             self._save_observation(num_observation, observation)
 
             if create_reference:
@@ -230,9 +234,17 @@ class EggBox(Task):
                     reference_posterior_samples,
                 )
 
+        print("Only makes 1 samples for now, too parallel.")
         num_observation = 1
         observation_seed = self.observation_seeds[0]
         run(num_observation, observation_seed)
+
+        # Parallel(n_jobs=n_jobs, verbose=50, backend="loky")(
+        #     delayed(run)(num_observation, observation_seed, **kwargs)
+        #     for num_observation, observation_seed in enumerate(
+        #         self.observation_seeds, start=1
+        #     )
+        # )
 
 
 if __name__ == "__main__":
@@ -251,7 +263,7 @@ if __name__ == "__main__":
         simulator_scale=args.simulator_scale,
     )
     task._setup(
+        n_jobs=args.n_jobs,
         n_interpolation_quantiles=args.n_interpolation_quantiles,
         epsilon=args.unit_cube_epsilon,
-        n_jobs=args.n_jobs,
     )
