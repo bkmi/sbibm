@@ -200,7 +200,7 @@ class EggBox(Task):
             n_jobs: Number of to use for Joblib
             create_reference: If False, skips reference creation
         """
-        from joblib import Parallel, delayed
+        from joblib import Parallel, delayed  # noqa: F401
 
         def run(num_observation, observation_seed, **kwargs):
             np.random.seed(observation_seed)
