@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 import pandas as pd
@@ -75,6 +75,21 @@ class Torus(Task):
             b = parameters[..., 1]
             c = np.sqrt((a - 0.6) ** 2 + (b - 0.8) ** 2)
             return np.stack([parameters[..., 0], c, parameters[..., 2]], axis=-1)
+
+    def get_additive_noise(self, key) -> Callable:
+        keytype = type(key)
+
+        def noise(simulation: Dict[keytype, np.array], *args):
+            x = scipy.stats.multivariate_normal(
+                mean=simulation[key],
+                cov=torch.inverse(self.simulator_params["precision_matrix"])
+                .detach()
+                .cpu()
+                .numpy(),
+            ).rvs()
+            return dict(key=x)
+
+        return noise
 
     def get_simulator(self, max_calls: Optional[int] = None) -> Simulator:
         """Get function returning samples from simulator given parameters
@@ -272,7 +287,10 @@ class Torus(Task):
             self._save_true_parameters(num_observation, true_parameters)
 
             simulator = self.get_simulator()
-            observation = simulator(true_parameters)
+            if num_observation == 1:
+                observation = true_parameters.clone()
+            else:
+                observation = simulator(true_parameters)
             self._save_observation(num_observation, observation)
 
             if create_reference:

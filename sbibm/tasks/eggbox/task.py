@@ -1,10 +1,11 @@
 import math
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 import pandas as pd
 import pyro
+import scipy.stats
 import torch
 from pyro import distributions as pdist
 
@@ -68,6 +69,21 @@ class EggBox(Task):
     @staticmethod
     def g(parameters: torch.Tensor) -> torch.Tensor:
         return torch.sin(math.pi * parameters) ** 2
+
+    def get_additive_noise(self, key) -> Callable:
+        keytype = type(key)
+
+        def noise(simulation: Dict[keytype, np.array], *args):
+            x = scipy.stats.multivariate_normal(
+                mean=simulation[key],
+                cov=torch.inverse(self.simulator_params["precision_matrix"])
+                .detach()
+                .cpu()
+                .numpy(),
+            ).rvs()
+            return dict(key=x)
+
+        return noise
 
     def get_simulator(self, max_calls: Optional[int] = None) -> Simulator:
         """Get function returning samples from simulator given parameters

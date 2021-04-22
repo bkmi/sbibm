@@ -1,8 +1,9 @@
 # pylint: disable=no-member, not-callable
 import logging
 from pathlib import Path
-from typing import Callable, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Union
 
+import numpy as np
 import pandas as pd
 import pyro
 import scipy.stats
@@ -113,6 +114,20 @@ class GaussianLinearUniform(Task):
             return pyro.sample("parameters", self.prior_dist.expand_by([num_samples]))
 
         return prior
+
+    @staticmethod
+    def g(parameters: torch.Tensor) -> torch.Tensor:
+        return parameters
+
+    def get_additive_noise(self, key) -> Callable:
+        keytype = type(key)
+
+        def noise(simulation: Dict[keytype, np.array], *args):
+            x = simulation[key]
+            x = x + np.random.randn(*x.shape) * self.simulator_scale
+            return dict(key=x)
+
+        return noise
 
     def get_simulator(self, max_calls: Optional[int] = None) -> Simulator:
         """Get function returning samples from simulator given parameters
