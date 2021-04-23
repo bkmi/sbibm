@@ -5,7 +5,6 @@ from typing import Any, Callable, Dict, Optional
 import numpy as np
 import pandas as pd
 import pyro
-import scipy.stats
 import torch
 from pyro import distributions as pdist
 
@@ -74,13 +73,8 @@ class EggBox(Task):
         keytype = type(key)
 
         def noise(simulation: Dict[keytype, np.array], *args):
-            x = scipy.stats.multivariate_normal(
-                mean=simulation[key],
-                cov=torch.inverse(self.simulator_params["precision_matrix"])
-                .detach()
-                .cpu()
-                .numpy(),
-            ).rvs()
+            x = simulation[key]
+            x = x + self.simulator_scale * np.random.randn(*x.shape)
             return dict(key=x)
 
         return noise

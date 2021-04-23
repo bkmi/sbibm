@@ -80,13 +80,8 @@ class Torus(Task):
         keytype = type(key)
 
         def noise(simulation: Dict[keytype, np.array], *args):
-            x = scipy.stats.multivariate_normal(
-                mean=simulation[key],
-                cov=torch.inverse(self.simulator_params["precision_matrix"])
-                .detach()
-                .cpu()
-                .numpy(),
-            ).rvs()
+            x = simulation[key]
+            x = x + np.random.randn(*x.shape) * self.simulator_scale.detach().cpu().numpy()
             return dict(key=x)
 
         return noise
