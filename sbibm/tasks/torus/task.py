@@ -49,6 +49,7 @@ class Torus(Task):
 
         self.simulator_scale = torch.tensor(simulator_scale)
         self.simulator_params = {
+            "covariance_matrix": torch.diag(self.simulator_scale),
             "precision_matrix": torch.inverse(torch.diag(self.simulator_scale)),
         }
 
@@ -81,7 +82,11 @@ class Torus(Task):
 
         def noise(simulation: Dict[keytype, np.array], *args):
             x = simulation[key]
-            x = x + np.random.randn(*x.shape) * self.simulator_scale.detach().cpu().numpy()
+            x = (
+                x
+                + np.random.randn(*x.shape)
+                * self.simulator_scale.detach().cpu().numpy()
+            )
             return dict(key=x)
 
         return noise
@@ -172,28 +177,29 @@ class Torus(Task):
         path.parent.mkdir(parents=True, exist_ok=True)
         self.save_parameters(path, true_parameters)
 
-    def _get_unnormalized_posterior_pdf(self, observation, cov) -> np.ndarray:
-        normal_pdf = compose(
-            np.exp, scipy.stats.multivariate_normal(mean=observation, cov=cov).logpdf
+    def _get_unnormalized_posterior_logpdf(self, observation) -> Callable:
+        normal = scipy.stats.multivariate_normal(
+            mean=observation,
+            cov=self.simulator_params["covariance_matrix"].detach().cpu().numpy(),
         )
-        return lambda theta: normal_pdf(self.g(theta))
+        return compose(normal.logpdf, self.g)
 
-    def _get_max_unnormalized_posterior_pdf(self, observation, cov):
-        unnormalized_posterior_pdf = self._get_unnormalized_posterior_pdf(
-            observation, cov
+    def _get_max_unnormalized_posterior_logpdf(self, observation):
+        unnormalized_posterior_logpdf = self._get_unnormalized_posterior_logpdf(
+            observation,
         )
 
         xx, yy, zz = np.mgrid[0:1:0.05, 0:1:0.05, 0:1:0.05]
         thetas = np.stack([xx, yy, zz], axis=-1)
-        probs = unnormalized_posterior_pdf(thetas)
+        probs = unnormalized_posterior_logpdf(thetas)
 
         indmax = np.argmax(probs)
         indmax = np.unravel_index(indmax, probs.shape)
         argmax = thetas[indmax]
         argmax = scipy.optimize.minimize(
-            lambda x: -unnormalized_posterior_pdf(x), argmax
+            lambda x: -unnormalized_posterior_logpdf(x), argmax
         ).x
-        return unnormalized_posterior_pdf(argmax)
+        return unnormalized_posterior_logpdf(argmax), argmax
 
     def _sample_reference_posterior(
         self,
@@ -220,22 +226,13 @@ class Torus(Task):
         if num_observation is not None:
             observation = self.get_observation(num_observation=num_observation)
 
-        reference_posterior_samples = []
-
-        cov = (
-            torch.inverse(self.simulator_params["precision_matrix"])
-            .detach()
-            .cpu()
-            .numpy()
-        )
         sample_fn = lambda x: np.random.rand(x, 3)  # noqa: E731
         logpdf_sampling = lambda x: np.zeros(len(x))  # noqa: E731
-        logpdf_target = compose(
-            np.log,
-            self._get_unnormalized_posterior_pdf(observation.squeeze().numpy(), cov),
+        logpdf_target = self._get_unnormalized_posterior_logpdf(
+            observation.squeeze().numpy()
         )
-        logmaxratio = compose(np.log, self._get_max_unnormalized_posterior_pdf)(
-            observation.squeeze().numpy(), cov  # posterior term
+        logmaxratio, argmax = self._get_max_unnormalized_posterior_logpdf(
+            observation.squeeze().numpy()  # posterior term
         ) - np.zeros(
             1
         )  # flat prior term
@@ -277,12 +274,16 @@ class Torus(Task):
                 true_parameters = compose(torch.atleast_2d, torch.tensor)(
                     [0.57, 0.8, 1.0]
                 )
+            elif num_observation == 2:
+                true_parameters = compose(torch.atleast_2d, torch.tensor)(
+                    [0.5000, 0.9000, 1.0]
+                )
             else:
                 true_parameters = prior(num_samples=1)
             self._save_true_parameters(num_observation, true_parameters)
 
             simulator = self.get_simulator()
-            if num_observation == 1:
+            if num_observation in [1, 2]:
                 observation = self.g(true_parameters)
             else:
                 observation = simulator(true_parameters)

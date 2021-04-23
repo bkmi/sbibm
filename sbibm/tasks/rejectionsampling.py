@@ -16,10 +16,8 @@ def rejection_sample(
         q = logpdf_target(samples_proposed)
         u = np.log(np.random.rand(*p.shape))
 
-        indkeep = u <= q - logmaxratio - p
-        samples_kept = np.reshape(
-            samples_proposed[indkeep, ...], (-1, *samples_proposed.shape[1:])
-        )
+        indkeep = u < q - logmaxratio - p
+        samples_kept = samples_proposed[indkeep, ...]
         samples.append(samples_kept)
         counter += 1
 
