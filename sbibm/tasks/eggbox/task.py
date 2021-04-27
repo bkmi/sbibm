@@ -50,7 +50,7 @@ class EggBox(Task):
         self.simulator_scale = simulator_scale
         self.simulator_params = {
             "precision_matrix": torch.inverse(
-                self.simulator_scale * torch.eye(self.dim_parameters)
+                (self.simulator_scale ** 2) * torch.eye(self.dim_parameters)
             )
         }
 
@@ -92,10 +92,10 @@ class EggBox(Task):
         """
 
         def simulator(parameters):
-            return self.g(parameters) + pyro.sample(
+            return pyro.sample(
                 "data",
                 pdist.MultivariateNormal(
-                    loc=torch.zeros_like(parameters),
+                    loc=self.g(parameters),
                     precision_matrix=self.simulator_params["precision_matrix"],
                 ),
             )
@@ -107,6 +107,7 @@ class EggBox(Task):
             self.path
             / "files"
             / f"scale_{self.simulator_scale:.0e}"
+            / f"dim_{self.dim_parameters}"
             / f"num_observation_{num_observation}"
         )
 
