@@ -48,9 +48,11 @@ class Torus(Task):
         self.prior_dist = pdist.Uniform(**self.prior_params).to_event(1)
 
         self.simulator_scale = torch.tensor(simulator_scale)
+        self.simulator_std = self.simulator_scale
+        self.simulator_var = self.simulator_scale ** 2
         self.simulator_params = {
-            "covariance_matrix": torch.diag(self.simulator_scale),
-            "precision_matrix": torch.inverse(torch.diag(self.simulator_scale)),
+            "covariance_matrix": torch.diag(self.simulator_var),
+            "precision_matrix": torch.inverse(torch.diag(self.simulator_var)),
         }
 
     def get_param_limits(self) -> torch.Tensor:
@@ -66,14 +68,12 @@ class Torus(Task):
 
     @staticmethod
     def g(parameters: torch.Tensor) -> torch.Tensor:
+        a = parameters[..., 0]
+        b = parameters[..., 1]
         if isinstance(parameters, torch.Tensor):
-            a = parameters[..., 0]
-            b = parameters[..., 1]
             c = torch.sqrt((a - 0.6) ** 2 + (b - 0.8) ** 2)
             return torch.stack([parameters[..., 0], c, parameters[..., 2]], dim=-1)
         else:
-            a = parameters[..., 0]
-            b = parameters[..., 1]
             c = np.sqrt((a - 0.6) ** 2 + (b - 0.8) ** 2)
             return np.stack([parameters[..., 0], c, parameters[..., 2]], axis=-1)
 
@@ -84,8 +84,7 @@ class Torus(Task):
             x = simulation[key]
             x = (
                 x
-                + np.random.randn(*x.shape)
-                * self.simulator_scale.detach().cpu().numpy()
+                + np.random.randn(*x.shape) * self.simulator_std.detach().cpu().numpy()
             )
             return dict(key=x)
 
@@ -104,10 +103,10 @@ class Torus(Task):
         """
 
         def simulator(parameters):
-            return self.g(parameters) + pyro.sample(
+            return pyro.sample(
                 "data",
                 pdist.MultivariateNormal(
-                    loc=torch.zeros_like(parameters),
+                    loc=self.g(parameters),
                     precision_matrix=self.simulator_params["precision_matrix"],
                 ),
             )
@@ -189,7 +188,18 @@ class Torus(Task):
             observation,
         )
 
-        xx, yy, zz = np.mgrid[0:1:0.05, 0:1:0.05, 0:1:0.05]
+        # # If there is a num_observation
+        # argmax = scipy.optimize.minimize(
+        #     lambda x: -unnormalized_posterior_logpdf(x),
+        #     x0=self.get_true_parameters().numpy(),
+        #     jac='3-point',
+        #     bounds=self.get_param_limits().numpy(),
+        # )
+        # if argmax.success == False:
+        #     print("logmax did not converge.")
+        # return unnormalized_posterior_logpdf(argmax.x), argmax
+
+        xx, yy, zz = np.mgrid[0:1:0.01, 0:1:0.01, 0:1:0.01]
         thetas = np.stack([xx, yy, zz], axis=-1)
         probs = unnormalized_posterior_logpdf(thetas)
 
@@ -197,9 +207,21 @@ class Torus(Task):
         indmax = np.unravel_index(indmax, probs.shape)
         argmax = thetas[indmax]
         argmax = scipy.optimize.minimize(
-            lambda x: -unnormalized_posterior_logpdf(x), argmax
-        ).x
-        return unnormalized_posterior_logpdf(argmax), argmax
+            lambda x: -unnormalized_posterior_logpdf(x),
+            x0=argmax,
+            jac="3-point",
+            bounds=self.get_param_limits().numpy(),
+        )
+        if not argmax.success:
+            argmax = scipy.optimize.minimize(
+                lambda x: -unnormalized_posterior_logpdf(x),
+                x0=argmax.x,
+                hess="3-point",
+                bounds=self.get_param_limits().numpy(),
+            )
+        if not argmax.success:
+            print("logmax did not converge.")
+        return unnormalized_posterior_logpdf(argmax.x), argmax
 
     def _sample_reference_posterior(
         self,
@@ -231,11 +253,9 @@ class Torus(Task):
         logpdf_target = self._get_unnormalized_posterior_logpdf(
             observation.squeeze().numpy()
         )
-        logmaxratio, argmax = self._get_max_unnormalized_posterior_logpdf(
+        logmaxratio, _ = self._get_max_unnormalized_posterior_logpdf(
             observation.squeeze().numpy()  # posterior term
-        ) - np.zeros(
-            1
-        )  # flat prior term
+        )  # flat prior term, subtract zero
 
         reference_posterior_samples = rejection_sample(
             n=num_samples,
@@ -243,7 +263,7 @@ class Torus(Task):
             logpdf_sampling=logpdf_sampling,
             logpdf_target=logpdf_target,
             logmaxratio=logmaxratio,
-            maxiter=500000,
+            maxiter=500_000,
         )
 
         if not len(reference_posterior_samples) == num_samples:
