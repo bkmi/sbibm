@@ -227,7 +227,7 @@ class EggBox(Task):
 
             simulator = self.get_simulator()
             if num_observation == 1:
-                observation = true_parameters.clone()
+                observation = self.g(true_parameters)
             else:
                 observation = simulator(true_parameters)
             self._save_observation(num_observation, observation)
