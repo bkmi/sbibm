@@ -21,27 +21,27 @@ class TruncNorm(object):
         mean: torch.Tensor,
         low: float,
         high: float,
-        scale: Union[float, torch.Tensor],
+        std: Union[float, torch.Tensor],
     ):
         self.mean = self._1d_tensor_to_list(mean)
         self.dim = len(self.mean)
 
-        if isinstance(scale, torch.Tensor):
-            self.scale = self._1d_tensor_to_list(scale)
-        elif isinstance(scale, float):
-            self.scale = [scale] * self.dim
+        if isinstance(std, torch.Tensor):
+            self.std = self._1d_tensor_to_list(std)
+        elif isinstance(std, float):
+            self.std = [std] * self.dim
         else:
             raise NotImplementedError
-        assert self.dim == len(self.scale)
+        assert self.dim == len(self.std)
 
-        self.a = [(low - x) / s for x, s in zip(self.mean, self.scale)]
-        self.b = [(high - x) / s for x, s in zip(self.mean, self.scale)]
+        self.a = [(low - x) / s for x, s in zip(self.mean, self.std)]
+        self.b = [(high - x) / s for x, s in zip(self.mean, self.std)]
         assert self.dim == len(self.a)
         assert self.dim == len(self.b)
 
         self.dists = [
             scipy.stats.truncnorm(a=a, b=b, loc=m, scale=s)
-            for a, b, m, s in zip(self.a, self.b, self.mean, self.scale)
+            for a, b, m, s in zip(self.a, self.b, self.mean, self.std)
         ]
         assert self.dim == len(self.dists)
 
@@ -78,7 +78,7 @@ class GaussianLinearUniform(Task):
         Args:
             dim: Dimensionality of parameters and data.
             prior_bound: Prior is uniform in [-prior_bound, +prior_bound].
-            simulator_scale: Standard deviation of noise in simulator.
+            simulator_scale: Variance of noise in simulator.
         """
         super().__init__(
             dim_parameters=dim,
@@ -124,7 +124,7 @@ class GaussianLinearUniform(Task):
 
         def noise(simulation: Dict[keytype, np.array], *args):
             x = simulation[key]
-            x = x + np.random.randn(*x.shape) * self.simulator_scale
+            x = x + np.random.randn(*x.shape) * np.sqrt(self.simulator_scale)
             return dict(key=x)
 
         return noise
@@ -314,12 +314,12 @@ class GaussianLinearUniform(Task):
     ) -> scipy.stats.rv_continuous:
         low = self.prior_params["low"][0].numpy()
         high = self.prior_params["high"][0].numpy()
-        scale = 1 / self.simulator_params["precision_matrix"][0, 0].numpy()
+        std = np.sqrt(self.simulator_scale)
         return TruncNorm(
             mean=observation,
             low=low,
             high=high,
-            scale=scale,
+            std=std,
         )
 
     def _sample_reference_posterior(
