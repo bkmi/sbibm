@@ -92,6 +92,7 @@ class GaussianLinearUniform(Task):
             path=Path(__file__).parent.absolute(),
         )
 
+        self.prior_bound = prior_bound
         self.prior_params = {
             "low": -prior_bound * torch.ones((self.dim_parameters,)),
             "high": +prior_bound * torch.ones((self.dim_parameters,)),
@@ -107,7 +108,7 @@ class GaussianLinearUniform(Task):
         }
 
     def get_param_limits(self) -> torch.Tensor:
-        return torch.tensor(self.dim_parameters * [[-1, 1]])
+        return torch.tensor(self.dim_parameters * [[-self.prior_bound, self.prior_bound]])
 
     def get_prior(self) -> Callable:
         def prior(num_samples=1):
