@@ -44,10 +44,10 @@ class TwoMoons(Task):
             path=Path(__file__).parent.absolute(),
         )
 
-        prior_bound = 1.0
+        self.prior_bound = 1.0
         self.prior_params = {
-            "low": -prior_bound * torch.ones((self.dim_parameters,)),
-            "high": +prior_bound * torch.ones((self.dim_parameters,)),
+            "low": -self.prior_bound * torch.ones((self.dim_parameters,)),
+            "high": +self.prior_bound * torch.ones((self.dim_parameters,)),
         }
         self.prior_dist = pdist.Uniform(**self.prior_params).to_event(1)
 
@@ -58,6 +58,9 @@ class TwoMoons(Task):
             "r_loc": 0.1,
             "r_scale": 0.01,
         }
+
+    def get_param_limits(self) -> torch.Tensor:
+        return torch.tensor(self.dim_parameters * [[-self.prior_bound, self.prior_bound]])
 
     def get_prior(self) -> Callable:
         def prior(num_samples=1):

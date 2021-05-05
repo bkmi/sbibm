@@ -36,6 +36,7 @@ class GaussianMixture(Task):
             path=Path(__file__).parent.absolute(),
         )
 
+        self.prior_bound = prior_bound
         self.prior_params = {
             "low": -prior_bound * torch.ones((self.dim_parameters,)),
             "high": +prior_bound * torch.ones((self.dim_parameters,)),
@@ -48,6 +49,9 @@ class GaussianMixture(Task):
             "mixture_scales": torch.tensor([1.0, 0.1]),
             "mixture_weights": torch.tensor([0.5, 0.5]),
         }
+
+    def get_param_limits(self) -> torch.Tensor:
+        return torch.tensor(self.dim_parameters * [[-self.prior_bound, self.prior_bound]])
 
     def get_prior(self) -> Callable:
         def prior(num_samples=1):
