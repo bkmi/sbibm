@@ -290,20 +290,11 @@ class Torus(Task):
             self._save_observation_seed(num_observation, observation_seed)
 
             prior = self.get_prior()
-            if num_observation == 1:
-                true_parameters = compose(torch.atleast_2d, torch.tensor)(
-                    [0.57, 0.8, 1.0]
-                )
-            elif num_observation == 2:
-                true_parameters = compose(torch.atleast_2d, torch.tensor)(
-                    [0.5000, 0.9000, 1.0]
-                )
-            else:
-                true_parameters = prior(num_samples=1)
+            true_parameters = compose(torch.atleast_2d, torch.tensor)([0.57, 0.8, 1.0])
             self._save_true_parameters(num_observation, true_parameters)
 
             simulator = self.get_simulator()
-            if num_observation in [1, 2]:
+            if num_observation == 1:
                 observation = self.g(true_parameters)
             else:
                 observation = simulator(true_parameters)
