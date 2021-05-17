@@ -18,6 +18,8 @@ def fig_metric(
     default_color: str = "#000000",
     colors_dict: Dict[str, Any] = {},
     config: Optional[str] = None,
+    x_axis_kwargs: Dict[str, Any] = {},
+    column_title: str = "Number of Simulations",
 ):
     """Plots metrics
 
@@ -36,6 +38,7 @@ def fig_metric(
         config: Optional string to load predefined config
         style: Optional dictionary for `den.set_style`
         keywords: Optional dictionary passed on to `den.lineplot`
+        x_axis_kwargs
 
     Returns:
         Chart
@@ -58,7 +61,7 @@ def fig_metric(
     keywords["column_labels"] = labels
     keywords["color"] = den.colorscale(colors, shorthand="algorithm:N")
 
-    x_axis_kwargs = {}
+    # x_axis_kwargs = {}
     y_axis_kwargs = {}
 
     if config == "manuscript":
@@ -128,7 +131,7 @@ def fig_metric(
         column="algorithm:N",
         independent_y=False,
         row_title="",
-        column_title="Number of Simulations",
+        column_title=column_title,
         title_orient="bottom",
         **keywords,
     )
