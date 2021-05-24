@@ -20,7 +20,6 @@ REQUIRES_PYTHON = ">=3.7.0"
 
 REQUIRED = [
     "autograd",
-    "elfi>=0.7.6",
     "deneb",
     "diffeqtorch",
     "joblib",
@@ -38,6 +37,7 @@ REQUIRED = [
 
 EXTRAS = {
     "dev": [
+        "elfi>=0.7.6",
         "autoflake",
         "black",
         "flake8",
