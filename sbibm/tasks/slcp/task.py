@@ -53,13 +53,19 @@ class SLCP(Task):
 
         self.prior_bound = 3.0
         self.prior_params = {
-            "low": torch.tensor([-self.prior_bound for _ in range(self.dim_parameters)]),
-            "high": torch.tensor([+self.prior_bound for _ in range(self.dim_parameters)]),
+            "low": torch.tensor(
+                [-self.prior_bound for _ in range(self.dim_parameters)]
+            ),
+            "high": torch.tensor(
+                [+self.prior_bound for _ in range(self.dim_parameters)]
+            ),
         }
         self.prior_dist = pdist.Uniform(**self.prior_params).to_event(1)
 
     def get_param_limits(self) -> torch.Tensor:
-        return torch.tensor(self.dim_parameters * [[-self.prior_bound, self.prior_bound]])
+        return torch.tensor(
+            self.dim_parameters * [[-self.prior_bound, self.prior_bound]]
+        )
 
     def get_prior(self) -> Callable:
         def prior(num_samples=1):

@@ -71,6 +71,15 @@ def fig_metric(
         style["font_family"] = "Inter"
         y_axis_kwargs = {"minExtent": 60}
 
+    if config == "custom":
+        keywords["width"] = 700 / len(df.algorithm.unique()) if width is None else width
+        keywords["height"] = 65 if height is None else height
+        style["font_size"] = 12
+        style["font_size_label"] = 18
+        style["font_size_title"] = 18
+        style["font_family"] = "Inter"
+        y_axis_kwargs = {"minExtent": 60}
+
     if config == "streamlit":
         keywords["width"] = None if width is None else width
         keywords["height"] = None if height is None else height

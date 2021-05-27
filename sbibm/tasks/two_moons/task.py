@@ -60,7 +60,9 @@ class TwoMoons(Task):
         }
 
     def get_param_limits(self) -> torch.Tensor:
-        return torch.tensor(self.dim_parameters * [[-self.prior_bound, self.prior_bound]])
+        return torch.tensor(
+            self.dim_parameters * [[-self.prior_bound, self.prior_bound]]
+        )
 
     def get_prior(self) -> Callable:
         def prior(num_samples=1):
