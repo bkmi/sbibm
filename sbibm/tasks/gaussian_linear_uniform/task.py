@@ -9,6 +9,7 @@ from pyro import distributions as pdist
 
 from sbibm.tasks.simulator import Simulator
 from sbibm.tasks.task import Task
+from sbibm.utils.torch import get_default_device
 
 
 class GaussianLinearUniform(Task):
@@ -40,6 +41,9 @@ class GaussianLinearUniform(Task):
             "low": -prior_bound * torch.ones((self.dim_parameters,)),
             "high": +prior_bound * torch.ones((self.dim_parameters,)),
         }
+        self.prior_params = {
+            k: v.to(device=get_default_device()) for k, v in self.prior_params.items()
+        }
 
         self.prior_dist = pdist.Uniform(**self.prior_params).to_event(1)
         self.prior_dist.set_default_validate_args(False)
@@ -48,6 +52,10 @@ class GaussianLinearUniform(Task):
             "precision_matrix": torch.inverse(
                 simulator_scale * torch.eye(self.dim_parameters),
             )
+        }
+        self.simulator_params = {
+            k: v.to(device=get_default_device())
+            for k, v in self.simulator_params.items()
         }
 
     def get_prior(self) -> Callable:

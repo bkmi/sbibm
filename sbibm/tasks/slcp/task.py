@@ -8,6 +8,7 @@ from pyro import distributions as pdist
 from sbibm.tasks.simulator import Simulator
 from sbibm.tasks.task import Task
 from sbibm.utils.io import get_tensor_from_csv, save_tensor_to_csv
+from sbibm.utils.torch import get_default_device
 
 
 class SLCP(Task):
@@ -57,6 +58,9 @@ class SLCP(Task):
             "low": torch.tensor([-3.0 for _ in range(self.dim_parameters)]),
             "high": torch.tensor([+3.0 for _ in range(self.dim_parameters)]),
         }
+        self.prior_params = {
+            k: v.to(device=get_default_device()) for k, v in self.prior_params.items()
+        }
         self.prior_dist = pdist.Uniform(**self.prior_params).to_event(1)
         self.prior_dist.set_default_validate_args(False)
 
@@ -78,7 +82,10 @@ class SLCP(Task):
             Simulator callable
         """
 
+        device = get_default_device()
+
         def simulator(parameters):
+            parameters = parameters.to(device="cpu")
             num_samples = parameters.shape[0]
 
             m = torch.stack(
@@ -112,7 +119,7 @@ class SLCP(Task):
             )
 
             if not self.distractors:
-                return pyro.sample("data", data_dist)
+                return pyro.sample("data", data_dist).to(device=device)
             else:
                 data = pyro.sample("data", data_dist).reshape((num_samples, 8))
 
@@ -125,7 +132,7 @@ class SLCP(Task):
                     self.path / "files" / "permutation_idx.torch"
                 )
 
-                return data_and_noise[:, permutation_idx]
+                return data_and_noise[:, permutation_idx].to(device=device)
 
         return Simulator(task=self, simulator=simulator, max_calls=max_calls)
 
