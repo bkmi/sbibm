@@ -13,6 +13,9 @@ from sbibm.tasks.task import Task
 from sbibm.utils.decorators import lazy_property
 
 
+# This is more complicated device-wise
+
+
 class SIR(Task):
     def __init__(
         self,

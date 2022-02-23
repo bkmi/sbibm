@@ -8,6 +8,7 @@ from pyro import distributions as pdist
 
 from sbibm.tasks.simulator import Simulator
 from sbibm.tasks.task import Task
+from sbibm.utils.torch import get_default_device
 
 
 class GaussianMixture(Task):
@@ -40,6 +41,9 @@ class GaussianMixture(Task):
             "low": -prior_bound * torch.ones((self.dim_parameters,)),
             "high": +prior_bound * torch.ones((self.dim_parameters,)),
         }
+        self.prior_params = {
+            k: v.to(device=get_default_device()) for k, v in self.prior_params.items()
+        }
 
         self.prior_dist = pdist.Uniform(**self.prior_params).to_event(1)
         self.prior_dist.set_default_validate_args(False)
@@ -48,6 +52,10 @@ class GaussianMixture(Task):
             "mixture_locs_factor": torch.tensor([1.0, 1.0]),
             "mixture_scales": torch.tensor([1.0, 0.1]),
             "mixture_weights": torch.tensor([0.5, 0.5]),
+        }
+        self.simulator_params = {
+            k: v.to(device=get_default_device())
+            for k, v in self.simulator_params.items()
         }
 
     def get_prior(self) -> Callable:

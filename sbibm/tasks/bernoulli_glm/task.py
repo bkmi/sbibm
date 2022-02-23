@@ -56,6 +56,9 @@ class BernoulliGLM(Task):
         Binv[1:, 1:] = torch.matmul(F.T, F)  # filter
 
         self.prior_params = {"loc": torch.zeros((M + 1,)), "precision_matrix": Binv}
+        self.prior_params = {
+            k: v.to(device=get_default_device()) for k, v in self.prior_params.items()
+        }
         self.prior_dist = pdist.MultivariateNormal(**self.prior_params)
         self.prior_dist.set_default_validate_args(False)
 

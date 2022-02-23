@@ -11,6 +11,7 @@ import sbibm
 from sbibm.tasks.simulator import Simulator
 from sbibm.tasks.task import Task
 from sbibm.utils.pyro import make_log_prob_grad_fn
+from sbibm.utils.torch import get_default_device
 
 
 class TwoMoons(Task):
@@ -48,6 +49,9 @@ class TwoMoons(Task):
         self.prior_params = {
             "low": -prior_bound * torch.ones((self.dim_parameters,)),
             "high": +prior_bound * torch.ones((self.dim_parameters,)),
+        }
+        self.prior_params = {
+            k: v.to(device=get_default_device()) for k, v in self.prior_params.items()
         }
         self.prior_dist = pdist.Uniform(**self.prior_params).to_event(1)
         self.prior_dist.set_default_validate_args(False)
@@ -165,7 +169,11 @@ class TwoMoons(Task):
         *args,
         **kwargs: Any,
     ) -> Dict[str, Any]:
-        return {"parameters": torch.distributions.transforms.IndependentTransform(torch.distributions.transforms.identity_transform, 1) }
+        return {
+            "parameters": torch.distributions.transforms.IndependentTransform(
+                torch.distributions.transforms.identity_transform, 1
+            )
+        }
 
     def _get_log_prob_fn(
         self,
