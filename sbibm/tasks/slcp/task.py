@@ -85,7 +85,7 @@ class SLCP(Task):
         device = get_default_device()
 
         def simulator(parameters):
-            parameters = parameters.to(device="cpu")
+            parameters = parameters.to(device=device)
             num_samples = parameters.shape[0]
 
             m = torch.stack(
@@ -99,10 +99,10 @@ class SLCP(Task):
             rho = torch.nn.Tanh()(parameters[:, [4]]).squeeze()
 
             S = torch.empty((num_samples, 2, 2))
-            S[:, 0, 0] = s1 ** 2
+            S[:, 0, 0] = s1**2
             S[:, 0, 1] = rho * s1 * s2
             S[:, 1, 0] = rho * s1 * s2
-            S[:, 1, 1] = s2 ** 2
+            S[:, 1, 1] = s2**2
 
             # Add eps to diagonal to ensure PSD
             eps = 0.000001
@@ -124,15 +124,15 @@ class SLCP(Task):
                 data = pyro.sample("data", data_dist).reshape((num_samples, 8))
 
                 gmm = torch.load(self.path / "files" / "gmm.torch")
-                noise = gmm.sample((num_samples,)).type(data.dtype)
+                noise = gmm.sample((num_samples,)).type(data.dtype).to(device=device)
 
                 data_and_noise = torch.cat([data, noise], dim=1)
 
                 permutation_idx = torch.load(
                     self.path / "files" / "permutation_idx.torch"
-                )
+                ).to(device=device)
 
-                return data_and_noise[:, permutation_idx].to(device=device)
+                return data_and_noise[:, permutation_idx]
 
         return Simulator(task=self, simulator=simulator, max_calls=max_calls)
 
