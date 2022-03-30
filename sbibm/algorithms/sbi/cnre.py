@@ -125,6 +125,7 @@ def run(
 
     # for r in range(num_rounds):
     if training_samples_root is None:
+        log.info(f"simulating new training samples")
         theta, x = inference.simulate_for_sbi(
             simulator,
             proposal,
@@ -132,6 +133,7 @@ def run(
             simulation_batch_size=simulation_batch_size,
         )
     else:
+        log.info(f"loading training samples from: {training_samples_root}")
         theta, x = cnre.data.load_training_samples(
             task.name, num_simulations, training_samples_root
         )
