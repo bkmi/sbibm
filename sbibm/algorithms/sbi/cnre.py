@@ -1,9 +1,9 @@
 import logging
 import math
 from typing import Any, Dict, Optional, Tuple
-from unittest import result
 
 import cnre
+import cnre.data
 import torch
 from sbi import inference as inference
 from sbi.utils.get_nn_models import classifier_nn
@@ -21,10 +21,13 @@ def run(
     num_samples: int,
     num_simulations: int,
     num_observation: Optional[int] = None,
+    training_samples_root: Optional[str] = None,
     observation: Optional[torch.Tensor] = None,
-    num_rounds: int = 10,
+    num_rounds: int = 1,
     neural_net: str = "resnet",
     hidden_features: int = 50,
+    num_blocks: int = 2,
+    use_batch_norm: bool = True,
     simulation_batch_size: int = 1000,
     training_batch_size: int = 10000,
     num_atoms: int = 10,
@@ -110,6 +113,8 @@ def run(
     get_classifier = classifier_nn(
         model=neural_net.lower(),
         hidden_features=hidden_features,
+        num_blocks=num_blocks,
+        use_batch_norm=use_batch_norm,
         z_score_x=z_score_x,
         z_score_theta=z_score_theta,
     )
@@ -118,59 +123,68 @@ def run(
     proposal = prior
     mcmc_parameters["warmup_steps"] = 25
 
-    for r in range(num_rounds):
+    # for r in range(num_rounds):
+    if training_samples_root is None:
         theta, x = inference.simulate_for_sbi(
             simulator,
             proposal,
             num_simulations=num_simulations_per_round,
             simulation_batch_size=simulation_batch_size,
         )
-        dataset = torch.utils.data.TensorDataset(theta, x)
-
-        train_loader, valid_loader = cnre.get_dataloaders(
-            dataset, training_batch_size, validation_fraction
+    else:
+        theta, x = cnre.data.load_training_samples(
+            task.name, num_simulations, training_samples_root
         )
+    dataset = torch.utils.data.TensorDataset(theta, x)
 
-        for theta, x in train_loader:
-            classifier = get_classifier(theta, x)
-            break
-        optimizer = torch.optim.Adam(classifier.parameters(), lr=learning_rate)
+    train_loader, valid_loader = cnre.get_dataloaders(
+        dataset, training_batch_size, validation_fraction
+    )
 
-        results = cnre.train(
-            classifier,
-            optimizer,
-            max_num_epochs,
-            train_loader,
-            valid_loader,
-            num_atoms=num_atoms,
-            alpha=alpha,
-            reuse=reuse,
-        )
+    for theta, x in train_loader:
+        classifier = get_classifier(theta, x)
+        break
+    optimizer = torch.optim.Adam(classifier.parameters(), lr=learning_rate)
 
-        classifier.load_state_dict(results["best_network_state_dict"])
+    results = cnre.train(
+        classifier,
+        optimizer,
+        max_num_epochs,
+        train_loader,
+        valid_loader,
+        num_atoms=num_atoms,
+        alpha=alpha,
+        reuse=reuse,
+    )
 
-        if r > 1:
-            mcmc_parameters["init_strategy"] = "latest_sample"
+    classifier.load_state_dict(results["best_network_state_dict"])
 
-        posterior = cnre.get_sbi_posterior(
-            ratio_estimator=classifier,
-            prior=prior,
-            sample_with=sample_with,
-            mcmc_method=mcmc_method,
-            mcmc_parameters=mcmc_parameters,
-            rejection_sampling_parameters={},
-            enable_transform=False,
-        )
-        # Copy hyperparameters, e.g., mcmc_init_samples for "latest_sample" strategy.
-        if r > 0:
-            posterior.copy_hyperparameters_from(posteriors[-1])
-        proposal = posterior.set_default_x(observation)
-        posteriors.append(posterior)
+    # if r > 1:
+    #     mcmc_parameters["init_strategy"] = "latest_sample"
+
+    posterior = cnre.get_sbi_posterior(
+        ratio_estimator=classifier,
+        prior=prior,
+        sample_with=sample_with,
+        mcmc_method=mcmc_method,
+        mcmc_parameters=mcmc_parameters,
+        rejection_sampling_parameters={},
+        enable_transform=False,
+    )
+    # Copy hyperparameters, e.g., mcmc_init_samples for "latest_sample" strategy.
+    # if r > 0:
+    #     posterior.copy_hyperparameters_from(posteriors[-1])
+    proposal = posterior.set_default_x(observation)
+    posteriors.append(posterior)
 
     posterior = wrap_posterior(posteriors[-1], transforms)
 
-    assert simulator.num_simulations == num_simulations
+    if training_samples_root is None:
+        assert simulator.num_simulations == num_simulations
+        checked_num_simulations = simulator.num_simulations
+    else:
+        checked_num_simulations = num_simulations
 
     samples = posterior.sample((num_samples,)).detach()
 
-    return samples, simulator.num_simulations, None, results["valid_losses"]
+    return samples, checked_num_simulations, None, results["valid_losses"]
