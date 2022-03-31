@@ -45,7 +45,7 @@ def run(
     z_score_x: bool = True,
     z_score_theta: bool = True,
     max_num_epochs: int = None,
-    alpha: float = 1.0,
+    gamma: float = 1.0,
     reuse: bool = True,
 ) -> Tuple[torch.Tensor, int, Optional[torch.Tensor]]:
     """Runs CNRE
@@ -155,7 +155,7 @@ def run(
         train_loader,
         valid_loader,
         num_atoms=num_atoms,
-        alpha=alpha,
+        gamma=gamma,
         reuse=reuse,
     )
 
