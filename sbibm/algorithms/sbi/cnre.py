@@ -137,6 +137,8 @@ def run(
         theta, x = cnre.data.load_training_samples(
             task.name, num_simulations, training_samples_root
         )
+        if automatic_transforms_enabled:
+            theta = transforms(theta)
     dataset = torch.utils.data.TensorDataset(theta, x)
 
     train_loader, valid_loader = cnre.get_dataloaders(
@@ -160,6 +162,8 @@ def run(
     )
 
     classifier.load_state_dict(results["best_network_state_dict"])
+
+    avg_log_ratio = cnre.expected_log_ratio(valid_loader, classifier)
 
     # if r > 1:
     #     mcmc_parameters["init_strategy"] = "latest_sample"
@@ -189,4 +193,4 @@ def run(
 
     samples = posterior.sample((num_samples,)).detach()
 
-    return samples, checked_num_simulations, None, results["valid_losses"]
+    return samples, checked_num_simulations, None, results["valid_losses"], avg_log_ratio

@@ -2,6 +2,7 @@ import logging
 import math
 from typing import Any, Dict, Optional, Tuple
 
+import cnre
 import cnre.data
 import torch
 from sbi import inference as inference
@@ -141,6 +142,8 @@ def run(
             theta, x = cnre.data.load_training_samples(
                 task.name, num_simulations, training_samples_root
             )
+            if automatic_transforms_enabled:
+                theta = transforms(theta)
         else:
             raise NotImplementedError(
                 "Cannot load preloaded training samples and learn sequentially."
@@ -159,6 +162,7 @@ def run(
         )
         if r > 1:
             mcmc_parameters["init_strategy"] = "latest_sample"
+
         posterior = inference_method.build_posterior(
             density_estimator,
             sample_with=sample_with,
@@ -182,4 +186,16 @@ def run(
 
     samples = posterior.sample((num_samples,)).detach()
 
-    return samples, checked_num_simulations, None
+
+    theta, x, _ = inference_method.get_simulations()
+    dataset = torch.utils.data.TensorDataset(theta, x)
+    _, valid_loader = inference_method.get_dataloaders(
+        dataset,
+        training_batch_size,
+        validation_fraction=0.1,
+        resume_training=True,
+    )
+
+    avg_log_ratio = cnre.expected_log_ratio(valid_loader, inference_method._neural_net)
+
+    return samples, checked_num_simulations, None, avg_log_ratio
