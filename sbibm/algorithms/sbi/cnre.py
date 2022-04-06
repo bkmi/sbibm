@@ -46,6 +46,7 @@ def run(
     z_score_theta: bool = True,
     max_num_epochs: int = None,
     gamma: float = 1.0,
+    extra_theta_factor: int = 0,
     reuse: bool = True,
 ) -> Tuple[torch.Tensor, int, Optional[torch.Tensor]]:
     """Runs CNRE
@@ -137,13 +138,23 @@ def run(
         theta, x = cnre.data.load_training_samples(
             task.name, num_simulations, training_samples_root
         )
+        theta = theta[:(extra_theta_factor + 1) * num_simulations]
+        assert len(theta) == (extra_theta_factor + 1) * num_simulations
+        theta, extra_theta = theta[:num_simulations], theta[num_simulations:]
         if automatic_transforms_enabled:
             theta = transforms(theta)
     dataset = torch.utils.data.TensorDataset(theta, x)
+    extra_dataset = torch.utils.data.TensorDataset(extra_theta)
 
     train_loader, valid_loader = cnre.get_dataloaders(
         dataset, training_batch_size, validation_fraction
     )
+    if extra_theta_factor == 0:
+        extra_train_loader, extra_valid_loader = None, None
+    else:
+        extra_train_loader, extra_valid_loader = cnre.get_dataloaders(
+            extra_dataset, extra_theta_factor * training_batch_size, validation_fraction
+        )
 
     for theta, x in train_loader:
         classifier = get_classifier(theta, x)
@@ -156,6 +167,8 @@ def run(
         max_num_epochs,
         train_loader,
         valid_loader,
+        extra_train_loader, 
+        extra_valid_loader,
         num_atoms=num_atoms,
         gamma=gamma,
         reuse=reuse,
