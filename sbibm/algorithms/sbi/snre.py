@@ -3,7 +3,7 @@ import math
 from typing import Any, Dict, Optional, Tuple
 
 import cnre
-import cnre.data
+import cnre.data.presampled
 import torch
 from sbi import inference as inference
 from sbi.utils.get_nn_models import classifier_nn
@@ -139,7 +139,7 @@ def run(
             )
         elif training_samples_root is not None and num_rounds == 1:
             log.info(f"loading training samples from: {training_samples_root}")
-            theta, x = cnre.data.load_training_samples(
+            theta, x = cnre.data.presampled.load_training_samples(
                 task.name, num_simulations, training_samples_root
             )
             if automatic_transforms_enabled:
