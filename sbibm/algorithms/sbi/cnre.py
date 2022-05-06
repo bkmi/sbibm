@@ -30,7 +30,7 @@ def run(
     use_batch_norm: bool = True,
     simulation_batch_size: int = 1000,
     training_batch_size: int = 10000,
-    num_atoms: int = 10,
+    K: int = 9,
     automatic_transforms_enabled: bool = True,
     sample_with: str = "mcmc",
     mcmc_method: str = "slice_np_vectorized",
@@ -62,7 +62,7 @@ def run(
         hidden_features: Number of hidden features in network
         simulation_batch_size: Batch size for simulator
         training_batch_size: Batch size for training network
-        num_atoms: Number of atoms, -1 means same as `training_batch_size`
+        K: Number of potentially jointly drawn atoms
         automatic_transforms_enabled: Whether to enable automatic transforms
         mcmc_method: MCMC method
         mcmc_parameters: MCMC parameters
@@ -169,7 +169,7 @@ def run(
         valid_loader,
         extra_train_loader, 
         extra_valid_loader,
-        num_atoms=num_atoms,
+        K=K,
         gamma=gamma,
         reuse=reuse,
     )
