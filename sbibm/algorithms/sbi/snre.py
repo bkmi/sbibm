@@ -39,8 +39,6 @@ def run(
         "thin": 10,
         "warmup_steps": 100,
         "init_strategy": "sir",
-        "sir_batch_size": 1000,
-        "sir_num_batches": 100,
     },
     z_score_x: bool = True,
     z_score_theta: bool = True,
