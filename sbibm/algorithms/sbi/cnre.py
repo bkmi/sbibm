@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional, Tuple
 
 import cnre
 import cnre.data
+import cnre.algorithms
 import torch
 from sbi import inference as inference
 from sbi.utils.get_nn_models import classifier_nn
@@ -159,7 +160,7 @@ def run(
         break
     optimizer = torch.optim.Adam(classifier.parameters(), lr=learning_rate)
 
-    results = cnre.train(
+    results = cnre.algorithms.cnre.train(
         classifier,
         optimizer,
         max_num_epochs,
