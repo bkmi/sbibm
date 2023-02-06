@@ -47,11 +47,16 @@ def get_task(task_name: str, *args: Any, **kwargs: Any) -> Task:
         from sbibm.tasks.slcp.task import SLCP
 
         return SLCP(*args, **kwargs)
-
+    
     elif task_name == "slcp_distractors":
         from sbibm.tasks.slcp.task import SLCP
 
         return SLCP(*args, distractors=True, **kwargs)
+    
+    elif task_name == "slcp_gaussian":
+        from sbibm.tasks.slcp_gaussian.task import SLCPGaussian
+
+        return SLCPGaussian(*args, **kwargs)
 
     if task_name == "sir":
         from sbibm.tasks.sir.task import SIR
