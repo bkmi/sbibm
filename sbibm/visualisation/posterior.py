@@ -12,7 +12,7 @@ _LIMITS_ = {
     "bernoulli_glm": [[-6.0, +6.0] for _ in range(10)],
     "bernoulli_glm_raw": [[-6.0, +6.0] for _ in range(10)],
     "gaussian_linear": [[-1.0, +1.0] for _ in range(10)],
-    "gaussian_linear_2d": [[-1.0, +1.0] for _ in range(10)],
+    "gaussian_linear_2d": [[-1.0, +1.0] for _ in range(2)],
     "gaussian_linear_uniform": [[-1.0, +1.0] for _ in range(10)],
     "gaussian_mixture": [[-10.0, +10.0] for _ in range(2)],
     "lotka_volterra": [[0.0, 4.0], [0.0, 0.4], [0.0, 3.0], [0.0, 0.3]],
