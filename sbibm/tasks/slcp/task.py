@@ -211,7 +211,7 @@ class SLCP(Task):
         from sbibm.algorithms.pytorch.baseline_sir import run as run_sir
         from sbibm.algorithms.pytorch.utils.proposal import get_proposal
 
-        proposal_samples = run_sir(
+        do_get_proposal_samples = lambda: run_sir(
             task=self,
             num_observation=num_observation,
             observation=observation,
@@ -220,7 +220,7 @@ class SLCP(Task):
             batch_size=100_000,
         )
 
-        proposal_dist = get_proposal(
+        do_get_proposal = lambda proposal_samples: get_proposal(
             task=self,
             samples=proposal_samples,
             prior_weight=0.1,
@@ -228,6 +228,18 @@ class SLCP(Task):
             density_estimator="flow",
             flow_model="nsf",
         )
+
+        if num_observation is not None:
+            path = Path(__file__).parent / f"files/num_observation_{num_observation}/proposal_{num_samples:07d}.pt"
+            if path.exists():
+                proposal_dist = torch.load(path)
+            else:
+                proposal_samples = do_get_proposal_samples()
+                proposal_dist = do_get_proposal(proposal_samples)
+                torch.save(proposal_dist, path)
+        else:
+            proposal_samples = do_get_proposal_samples()
+            proposal_dist = do_get_proposal(proposal_samples)
 
         return run_rejection(
             task=self,

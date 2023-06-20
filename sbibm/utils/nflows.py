@@ -185,7 +185,7 @@ def get_flow(
 def train_flow(
     flow,
     dataset,
-    batch_size=100,
+    batch_size=1_000,
     learning_rate=5e-4,
     validation_fraction=0.1,
     stop_after_epochs=20,
