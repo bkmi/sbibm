@@ -38,6 +38,11 @@ def get_task(task_name: str, *args: Any, **kwargs: Any) -> Task:
 
         return GaussianLinear2d(*args, **kwargs)
 
+    elif task_name == "gaussian_linear_5d":
+        from sbibm.tasks.gaussian_linear_5d.task import GaussianLinear5d
+
+        return GaussianLinear5d(*args, **kwargs)
+
     elif task_name == "gaussian_linear_uniform":
         from sbibm.tasks.gaussian_linear_uniform.task import GaussianLinearUniform
 
