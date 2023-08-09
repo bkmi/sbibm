@@ -34,6 +34,7 @@ REQUIRED = [
     "scikit-learn",
     "torch>=1.8.0",
     "tqdm",
+    "lampe",
 ]
 
 EXTRAS = {

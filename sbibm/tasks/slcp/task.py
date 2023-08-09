@@ -211,6 +211,12 @@ class SLCP(Task):
         from sbibm.algorithms.pytorch.baseline_sir import run as run_sir
         from sbibm.algorithms.pytorch.utils.proposal import get_proposal
 
+        import lampe
+        from itertools import chain
+        from tempfile import TemporaryDirectory
+        from shutil import move
+
+
         do_get_proposal_samples = lambda n_samples: run_sir(
             task=self,
             num_observation=num_observation,
@@ -230,27 +236,64 @@ class SLCP(Task):
         )
 
         if num_observation is not None:
-            path = Path(__file__).parent / f"files/num_observation_{num_observation}/proposal.pt"
-            if path.exists():
-                proposal_dist = torch.load(path)
+            root = Path(__file__).parent / f"files/num_observation_{num_observation}/"
+            path_proposal = root / "proposal.pt"
+            path_data = root / "storage.h5"
+
+            if path_data.exists():
+                data = lampe.data.H5Dataset(path_data, batch_size=10_000)
+                datasets = [data]
+                size = len(data)
+            else:
+                datasets = []
+                size = 0
+
+            if path_proposal.exists():
+                proposal_dist = torch.load(path_proposal)
             else:
                 proposal_samples = do_get_proposal_samples(81_920)
                 proposal_dist = do_get_proposal(proposal_samples)
-                torch.save(proposal_dist, path)
+                torch.save(proposal_dist, path_proposal)
         else:
+            raise NotImplementedError("this only works for for a num_observation")
             proposal_samples = do_get_proposal_samples(num_samples)
             proposal_dist = do_get_proposal(proposal_samples)
 
-        return run_rejection(
-            task=self,
-            num_observation=num_observation,
-            observation=observation,
-            num_samples=num_samples,
-            batch_size=10_000,
-            num_batches_without_new_max=1_000,
-            multiplier_M=1.2,
-            proposal_dist=proposal_dist,
-        )
+        if size < num_samples:
+            num_new_samples = num_samples - size
+            new_samples = run_rejection(
+                task=self,
+                num_observation=num_observation,
+                observation=observation,
+                num_samples=num_new_samples,
+                batch_size=10_000,
+                num_batches_without_new_max=1_000,
+                multiplier_M=1.2,
+                proposal_dist=proposal_dist,
+            )
+            with TemporaryDirectory() as tmpdirname:
+                new_samples_path = Path(tmpdirname) / "new.h5"
+                merged_path = Path(tmpdirname) / "merged.h5"
+                lampe.data.H5Dataset.store(
+                    [(new_samples.numpy(), self.get_observation(num_observation).expand(len(new_samples), -1))],
+                    new_samples_path, 
+                    size=num_new_samples,
+                )
+                datasets.append(lampe.data.H5Dataset(new_samples_path, batch_size=10_000))
+                lampe.data.H5Dataset.store(
+                    pairs=chain(*datasets),
+                    file=merged_path,
+                    size=sum(map(len, datasets)),
+                )
+                move(merged_path, path_data)
+
+        data = lampe.data.H5Dataset(path_data, batch_size=10_000)  # reload since it could have been overwritten
+        samples = []
+        for theta, _ in data:
+            samples.append(theta)
+            if len(samples) >= num_samples:
+                break
+        return torch.concatenate(samples)[:num_samples]
 
     def _generate_noise_dist_parameters(self):
         import numpy as np
@@ -311,4 +354,6 @@ if __name__ == "__main__":
 
     task = SLCP()
     # task._generate_noise_dist_parameters()
+    # for no in range(1, 11):
+    #     task._sample_reference_posterior(100_000, num_observation=1)
     task._setup()
