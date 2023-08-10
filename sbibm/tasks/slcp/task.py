@@ -354,6 +354,6 @@ if __name__ == "__main__":
 
     task = SLCP()
     # task._generate_noise_dist_parameters()
-    # for no in range(4, 11):
+    # for no in range(1, 11):
     #     task._sample_reference_posterior(100_000, num_observation=no)
     task._setup()
